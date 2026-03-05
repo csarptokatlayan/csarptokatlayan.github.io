@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ============================================
+         SAYFA BAŞLIĞI — İstediğin gibi değiştir
+         ============================================ -->
+    <title>Penguin Math — Privacy Policy (App Store)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:            #080808;
+            --bg-card:       #101010;
+            --accent:        #FF6B2B;
+            --accent-dim:    rgba(255, 107, 43, 0.11);
+            --text:          #EBEBEB;
+            --text-muted:    #5a5a5a;
+            --text-dim:      #909090;
+            --border:        rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(255, 107, 43, 0.26);
+            --font:          'Outfit', sans-serif;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 180px 180px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* Header */
+        .page-header {
+            border-bottom: 1px solid var(--border);
+            background: rgba(8,8,8,0.95);
+            backdrop-filter: blur(20px);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            font-family: var(--font);
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .header-logo em { color: var(--accent); font-style: normal; }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s;
+            letter-spacing: 0.01em;
+        }
+
+        .back-btn:hover { color: var(--accent); }
+
+        /* Content */
+        main {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem;
+        }
+
+        /* Platform badge */
+        .platform-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 100px;
+            border: 1px solid var(--border-accent);
+            background: var(--accent-dim);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.25rem;
+        }
+
+        /* Page title block */
+        .page-title-block { margin-bottom: 2.5rem; }
+
+        .page-game-name {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        h1 {
+            font-family: var(--font);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .last-updated { font-size: 0.78rem; color: var(--text-muted); }
+
+        .section-divider { height: 1px; background: var(--border); margin: 2.5rem 0; }
+
+        /* Policy content */
+        .policy-content h2 {
+            font-family: var(--font);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.01em;
+            margin: 2rem 0 0.6rem;
+            padding-top: 0.25rem;
+        }
+
+        .policy-content h2:first-child { margin-top: 0; }
+
+        .policy-content p {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--text-dim);
+            line-height: 1.85;
+            margin-bottom: 0.75rem;
+        }
+
+        .policy-content ul { padding-left: 1.2rem; margin-bottom: 0.75rem; }
+
+        .policy-content li {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.85;
+            margin-bottom: 0.2rem;
+        }
+
+        .policy-content a { color: var(--accent); text-decoration: none; }
+        .policy-content a:hover { text-decoration: underline; }
+
+        .contact-box {
+            margin-top: 2.5rem;
+            padding: 1.35rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .contact-box p { margin: 0; }
+        .contact-box strong { color: var(--text); }
+
+        /* Footer */
+        .page-footer {
+            border-top: 1px solid var(--border);
+            padding: 1.75rem 2rem;
+            background: #050505;
+        }
+
+        .page-footer-inner {
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .page-footer-copy { font-size: 0.75rem; color: var(--text-muted); opacity: 0.6; }
+
+        .page-footer a {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .page-footer a:hover { color: var(--accent); }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+
+        @media (max-width: 600px) {
+            main { padding: 2.5rem 1.25rem 5rem; }
+            .page-header { padding: 0 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="page-header">
+        <a href="index.html" class="header-logo">Copper<em>hand</em></a>
+        <a href="index.html" class="back-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+            Back to Studio
+        </a>
+    </header>
+
+    <main>
+        <div class="platform-badge">App Store · Premium Game</div>
+
+        <div class="page-title-block">
+            <span style="text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.7rem; color: var(--text-muted);">Penguin Math (Paid Version)</span>
+            <h1>Privacy Policy</h1>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Last updated: March 2026</span>
+        </div>
+
+        <div class="policy-content">
+            <p>Copperhand Studio ("we", "us", or "our") is committed to protecting your privacy. This Privacy Policy applies to our premium mobile applications distributed via the Apple App Store.</p>
+
+            <h2>1. No Data Collection</h2>
+            <p>Our app is designed with privacy as a priority. <strong>We do not collect, store, or share any personal information, usage data, or device identifiers.</strong> There are no analytics tools (like Firebase) or tracking SDKs integrated into the app.</p>
+
+            <h2>2. No Advertisements or Pop-ups</h2>
+            <p>The app provides a distraction-free experience. There are no third-party advertisements, no pop-up banners, and no tracking for marketing purposes.</p>
+
+            <h2>3. No In-App Purchases</h2>
+            <p>The app is a one-time purchase (Paid App). There are no additional in-app purchases (IAP) or hidden costs inside the application.</p>
+
+            <h2>4. Children's Privacy (Made for Kids)</h2>
+            <p>Our app strictly complies with the Children's Online Privacy Protection Act (COPPA) and Apple's "Made for Kids" guidelines. Since we do not collect any data, there is no risk of collecting personal information from children. We do not include any external links or social media integration within the gameplay area that could be accessed by children without parental gates.</p>
+
+            <h2>5. App Store Services</h2>
+            <p>While we do not collect data, the Apple App Store may collect information related to your purchase and app installation as part of their standard service. Please refer to <a href="https://www.apple.com/legal/privacy/" target="_blank" style="color:var(--accent);">Apple's Privacy Policy</a> for more details.</p>
+
+            <h2>6. Contact Us</h2>
+            <div class="contact-box">
+                <p>If you have any questions regarding this policy or our app's privacy practices, please contact us at:</p>
+                <p style="margin-top: 0.5rem;"><strong style="color:var(--accent);">copperhandstudio1@gmail.com</strong></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="page-footer">
+        <div class="page-footer-inner">
+            <span class="page-footer-copy">© 2026 Copperhand Studio. All rights reserved.</span>
+            <div style="display:flex; gap:1.5rem;">
+                <a href="privacy-play.html">Android Privacy Policy</a>
+                <a href="index.html">Back to Studio</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

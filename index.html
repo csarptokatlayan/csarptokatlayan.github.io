@@ -1,77 +1,989 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resmi Oyun Sitesi</title>
+    <title>CopperHand Studio — Indie Game Developer</title>
+    <meta name="description" content="CopperHand Studio — Indie mobile game developer crafting engaging, educational experiences for players of all ages.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* ==========================================
+           CSS VARIABLES & RESET
+        ========================================== */
+        :root {
+            --bg:            #080808;
+            --bg-card:       #101010;
+            --bg-card-hover: #151515;
+            --accent:        #FF6B2B;
+            --accent-dim:    rgba(255, 107, 43, 0.11);
+            --accent-glow:   rgba(255, 107, 43, 0.32);
+            --text:          #EBEBEB;
+            --text-muted:    #5a5a5a;
+            --text-dim:      #909090;
+            --border:        rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(255, 107, 43, 0.26);
+            --font:          'Outfit', sans-serif;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-weight: 400;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Subtle grain */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 180px 180px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* ==========================================
+           NAVIGATION
+        ========================================== */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(8, 8, 8, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.4s;
+        }
+
+        .nav-logo {
+            font-family: var(--font);
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo em { color: var(--accent); font-style: normal; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+
+        .nav-cta {
+            background: var(--accent) !important;
+            color: #fff !important;
+            padding: 0.45rem 1.2rem !important;
+            border-radius: 5px;
+            font-weight: 600 !important;
+        }
+
+        .nav-cta:hover { background: #ff8552 !important; color: #fff !important; }
+
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 4px;
+        }
+
+        .nav-hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        /* ==========================================
+           HERO
+        ========================================== */
+        #hero {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify_content: center;
-            height: 100vh;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 900px; height: 900px;
+            background: radial-gradient(circle, rgba(255,107,43,0.07) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        #hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+            background-size: 80px 80px;
+            mask-image: radial-gradient(ellipse at center, black 35%, transparent 75%);
+            pointer-events: none;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.2s;
+        }
+
+        .hero-title {
+            font-family: var(--font);
+            font-size: clamp(3.5rem, 10vw, 8rem);
+            font-weight: 800;
+            line-height: 0.93;
+            letter-spacing: -0.04em;
+            color: var(--text);
+            margin-bottom: 1.75rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.4s;
+        }
+
+        .hero-title em { font-style: normal; color: var(--accent); }
+
+        .hero-subtitle {
+            max-width: 460px;
+            font-size: 1.05rem;
+            font-weight: 300;
+            color: var(--text-dim);
+            line-height: 1.75;
+            margin: 0 auto 2.5rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.6s;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.8s;
+        }
+
+        /* ==========================================
+           BUTTONS
+        ========================================== */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            font-family: var(--font);
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-radius: 5px;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.01em;
+        }
+
+        .btn-primary:hover {
+            background: #ff8552;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(255,107,43,0.28);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            background: transparent;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-family: var(--font);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* ==========================================
+           SECTION COMMON
+        ========================================== */
+        section { padding: 7rem 2rem; }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .section-header { margin-bottom: 3.5rem; }
+
+        .section-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .section-title {
+            font-family: var(--font);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            color: var(--text);
+        }
+
+        .section-desc {
+            max-width: 500px;
+            margin-top: 1rem;
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            line-height: 1.75;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent);
+            margin: 0 2rem;
+        }
+
+        /* ==========================================
+           GAMES SECTION
+        ========================================== */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* =============================================
+           OYUN KARTI
+           Yeni oyun eklemek için bu div bloğunu kopyala,
+           içerikleri güncelle. Privacy policy linkleri
+           için ayrı .html sayfaları oluşturmayı unutma.
+           ============================================= */
+        .game-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.75rem;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .game-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-accent);
+            transform: translateY(-5px);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px var(--border-accent);
+        }
+
+        .game-card:hover::before { opacity: 1; }
+
+        .game-card-header { display: flex; align-items: flex-start; gap: 1rem; }
+
+        .game-icon {
+            width: 68px; height: 68px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-dim), rgba(255,107,43,0.03));
+            border: 1px solid var(--border-accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.9rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .game-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; }
+
+        .game-info { flex: 1; }
+
+        .game-name {
+            font-family: var(--font);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.01em;
+        }
+
+        .game-genre {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .game-desc {
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            line-height: 1.7;
+            flex: 1;
+        }
+
+        .game-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+        .game-tag {
+            font-size: 0.68rem;
+            font-weight: 500;
+            padding: 0.22rem 0.6rem;
+            border-radius: 100px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .game-actions { display: flex; flex-direction: column; gap: 0.55rem; }
+
+        .store-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.7rem 0.9rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: var(--font);
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.025);
+            color: var(--text-dim);
+        }
+
+        .store-btn:hover {
+            border-color: var(--accent);
+            color: var(--text);
+            background: var(--accent-dim);
+        }
+
+        .store-btn-text { display: flex; flex-direction: column; line-height: 1.2; }
+        .store-btn-text small { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 400; }
+        .store-btn-text strong { font-weight: 600; font-size: 0.82rem; }
+
+        .store-btn.disabled { opacity: 0.38; cursor: not-allowed; pointer-events: none; }
+
+        /* Privacy links row */
+        .privacy-row {
+            display: flex;
+            gap: 0.9rem;
+            padding-top: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .privacy-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-family: var(--font);
+        }
+
+        .privacy-link:hover { color: var(--accent); }
+
+        .privacy-link svg { flex-shrink: 0; opacity: 0.7; }
+
+        /* ==========================================
+           ABOUT SECTION
+        ========================================== */
+        #about { background: linear-gradient(180deg, var(--bg) 0%, #0d0d0d 100%); }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .about-content { display: flex; flex-direction: column; gap: 1.1rem; }
+
+        .about-text { color: var(--text-dim); line-height: 1.85; font-size: 0.925rem; font-weight: 300; }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat {
+            padding: 1.1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             text-align: center;
         }
-        .container {
-            max-width: 600px;
-            padding: 20px;
+
+        .stat-number {
+            font-family: var(--font);
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            display: block;
+            letter-spacing: -0.03em;
         }
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            color: #4CAF50; /* Oyunun ana rengi */
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 500;
+            margin-top: 0.3rem;
+            display: block;
         }
-        p {
-            font-size: 1.2rem;
-            color: #b0b0b0;
-            margin-bottom: 30px;
+
+        .about-visual {
+            position: relative;
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .btn {
-            display: inline-block;
-            padding: 15px 30px;
-            background-color: #4CAF50;
-            color: white;
+
+        .about-visual-ring {
+            width: 260px; height: 260px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--accent-dim), rgba(255,107,43,0.03));
+            border: 1px solid var(--border-accent);
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+
+        .about-visual-ring::before {
+            content: '';
+            position: absolute;
+            inset: -50px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255,107,43,0.14);
+            animation: spin 22s linear infinite;
+        }
+
+        .about-visual-ring::after {
+            content: '';
+            position: absolute;
+            inset: -90px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255,107,43,0.07);
+            animation: spin 40s linear infinite reverse;
+        }
+
+        .about-logo-mark {
+            font-family: var(--font);
+            font-weight: 800;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            line-height: 1.1;
+        }
+
+        .about-logo-mark .big { font-size: 1.5rem; color: var(--text); letter-spacing: -0.03em; }
+        .about-logo-mark .big em { color: var(--accent); font-style: normal; }
+        .about-logo-mark .sub { font-size: 0.62rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; display: block; margin-top: 0.5rem; }
+
+        /* ==========================================
+           CONTACT SECTION
+        ========================================== */
+        #contact { background: var(--bg); }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.35rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: transform 0.2s;
+            color: inherit;
+            transition: all 0.2s;
+            margin-bottom: 0.9rem;
         }
-        .btn:hover {
-            transform: scale(1.05);
-            background-color: #45a049;
+
+        .contact-item:hover { border-color: var(--border-accent); background: var(--bg-card-hover); }
+
+        .contact-icon {
+            width: 42px; height: 42px;
+            border-radius: 9px;
+            background: var(--accent-dim);
+            border: 1px solid var(--border-accent);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
         }
-        .footer {
-            margin-top: 50px;
-            font-size: 0.8rem;
-            color: #555;
-        }
-        .footer a {
-            color: #777;
+
+        .contact-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.2rem; }
+        .contact-value { font-size: 0.9rem; color: var(--text); font-weight: 500; }
+
+        .social-title { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
+
+        .social-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.65rem; }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.8rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             text-decoration: none;
+            color: var(--text-dim);
+            font-family: var(--font);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
         }
+
+        .social-btn:hover { border-color: var(--border-accent); color: var(--accent); background: var(--accent-dim); }
+
+        /* ==========================================
+           FOOTER
+        ========================================== */
+        footer {
+            padding: 2.25rem 2rem;
+            border-top: 1px solid var(--border);
+            background: #050505;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-brand { font-family: var(--font); font-weight: 800; font-size: 0.95rem; color: var(--text-muted); letter-spacing: -0.01em; }
+        .footer-brand em { color: var(--accent); font-style: normal; }
+        .footer-copy { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; opacity: 0.6; }
+
+        .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
+
+        .footer-links a {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover { color: var(--accent); }
+
+        /* ==========================================
+           ANIMATIONS
+        ========================================== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ==========================================
+           RESPONSIVE
+        ========================================== */
+        @media (max-width: 768px) {
+            nav { padding: 0 1.25rem; }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 64px; left: 0; right: 0;
+                background: rgba(8,8,8,0.97);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 1.5rem 1.25rem;
+                gap: 1.25rem;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav-links.open { display: flex; }
+            .nav-hamburger { display: flex; }
+
+            .about-grid,
+            .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+
+            .about-visual { height: 260px; }
+            .about-visual-ring { width: 200px; height: 200px; }
+
+            .hero-actions { flex-direction: column; align-items: center; }
+            section { padding: 5rem 1.25rem; }
+            .games-grid { grid-template-columns: 1fr; }
+            .footer-inner { flex-direction: column; align-items: flex-start; gap: 1.1rem; }
+            .social-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #444; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Oyunun Adı</h1>
-        
-        <p>Dünyanın en eğlenceli mobil oyun deneyimine hazır mısın? Hemen indir ve maceraya katıl!</p>
+    <!-- NAVIGATION -->
+    <nav id="mainNav">
+        <a href="#hero" class="nav-logo">Copper<em>hand</em></a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#games">Games</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact" class="nav-cta">Contact</a></li>
+        </ul>
+        <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
 
-        <a href="https://play.google.com/store/apps/details?id=com.copperhand.penguinmath&pcampaignid=web_share" class="btn">Hemen İndir (Google Play)</a>
-
-        <div class="footer">
-            <p>&copy; 2026 Tüm Hakları Saklıdır.</p>
-            <p><a href="#">Gizlilik Politikası</a></p>
+    <!-- HERO -->
+    <section id="hero">
+        <p class="hero-eyebrow">Indie Game Studio</p>
+        <h1 class="hero-title">CopperHand<br><em>Studio</em></h1>
+        <p class="hero-subtitle">We craft engaging mobile games that challenge the mind and spark joy — one pixel at a time.</p>
+        <div class="hero-actions">
+            <a href="#games" class="btn-primary">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                Our Games
+            </a>
+            <a href="#about" class="btn-secondary">Learn More</a>
         </div>
-    </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- GAMES -->
+    <section id="games">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Portfolio</span>
+                <h2 class="section-title">Our Games</h2>
+                <p class="section-desc">Handcrafted mobile experiences designed to entertain, educate, and engage players of all ages.</p>
+            </div>
+
+            <div class="games-grid">
+
+                <!-- =============================================
+                     OYUN KARTI
+                     Yeni oyun eklemek için bu div bloğunu kopyala,
+                     içerikleri güncelle, privacy link href'lerini
+                     o oyuna ait .html dosyalarıyla değiştir.
+                     ============================================= -->
+                <div class="game-card reveal">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <!-- İkon: <img src="icon.png" alt="Penguin Math"> -->
+                            🐧
+                        </div>
+                        <div class="game-info">
+                            <div class="game-name">Penguin Math</div>
+                            <div class="game-genre">Educational · Puzzle</div>
+                        </div>
+                    </div>
+
+                    <p class="game-desc">
+                        Help penguins solve math puzzles! A fun and engaging educational game that makes learning arithmetic a joyful adventure for kids and adults alike.
+                    </p>
+
+                    <div class="game-tags">
+                        <span class="game-tag">Math</span>
+                        <span class="game-tag">Kids</span>
+                        <span class="game-tag">Puzzle</span>
+                        <span class="game-tag">Family</span>
+                    </div>
+
+                    <div class="game-actions">
+                        <a href="https://play.google.com/store/apps/details?id=com.copperhand.penguinmath&pcampaignid=web_share"
+                           target="_blank" rel="noopener noreferrer" class="store-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M3.18 23.5c.41.23.87.27 1.29.12L15.54 12 12 8.46 3.18 23.5z" fill="#EA4335"/>
+                                <path d="M20.53 10.26L17.7 8.7 13.84 12l3.86 3.3 2.83-1.56A1.7 1.7 0 0 0 20.53 10.26z" fill="#FBBC05"/>
+                                <path d="M4.47.38A1.7 1.7 0 0 0 3.18.5L12 8.46l3.54-3.54L4.47.38z" fill="#4285F4"/>
+                                <path d="M3.18.5a1.7 1.7 0 0 0-.68 1.5v20A1.7 1.7 0 0 0 3.18 23.5L12 12 3.18.5z" fill="#34A853"/>
+                            </svg>
+                            <span class="store-btn-text">
+                                <small>Get it on</small>
+                                <strong>Google Play</strong>
+                            </span>
+                        </a>
+
+                        <a href="#" class="store-btn disabled">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                            </svg>
+                            <span class="store-btn-text">
+                                <small>Coming soon on</small>
+                                <strong>App Store</strong>
+                            </span>
+                        </a>
+
+                        <!-- Privacy Policy links — separate pages -->
+                        <div class="privacy-row">
+                            <a href="privacy-play.html" class="privacy-link">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                Google Play Privacy
+                            </a>
+                            <a href="privacy-appstore.html" class="privacy-link">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                App Store Privacy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- ===== OYUN KARTI SONU ===== -->
+
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ABOUT -->
+    <section id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content">
+                    <div class="reveal">
+                        <span class="section-label">Who We Are</span>
+                        <h2 class="section-title">About Us</h2>
+                    </div>
+                    <p class="about-text reveal">
+                        CopperHand Studio is an independent game development studio passionate about creating games that are both entertaining and meaningful. We believe great games have the power to educate, connect, and inspire.
+                    </p>
+                    <p class="about-text reveal">
+                        From casual puzzles to educational adventures, every game we build is crafted with care — focusing on clean design, smooth mechanics, and genuine fun for players of all ages.
+                    </p>
+                    <div class="about-stats reveal">
+                        <div class="stat">
+                            <span class="stat-number">1+</span>
+                            <span class="stat-label">Games</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">∞</span>
+                            <span class="stat-label">Passion</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Indie</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-visual reveal">
+                    <div class="about-visual-ring">
+                        <div class="about-logo-mark">
+                            <div class="big">Copper<em>hand</em></div>
+                            <span class="sub">Studio</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Get In Touch</span>
+                <h2 class="section-title">Contact &<br>Support</h2>
+                <p class="section-desc">Have a question, found a bug, or just want to say hi? We're always happy to hear from players.</p>
+            </div>
+
+            <div class="contact-grid">
+                <div class="reveal">
+                    <a href="mailto:support@copperhandstudio.com" class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <span class="contact-label">Support Email</span>
+                            <span class="contact-value">copperhandstudio1@gmail.com</span>
+                        </div>
+                    </a>
+                    <div class="contact-item" style="cursor:default; pointer-events:none;">
+                        <div class="contact-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <div>
+                            <span class="contact-label">Location</span>
+                            <span class="contact-value">Istanbul, Turkey</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal">
+                    <p class="social-title">Follow Us</p>
+                    <div class="social-grid">
+                        <a href="#" class="social-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.629 5.906-5.629zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            X (Twitter)
+                        </a>
+                        <a href="#" class="social-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                            Instagram
+                        </a>
+                        <a href="#" class="social-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.102 18.08.114 18.1.131 18.11a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                            Discord
+                        </a>
+                        <a href="#" class="social-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.05a8.19 8.19 0 004.79 1.52V7.12a4.85 4.85 0 01-1.02-.43z"/></svg>
+                            TikTok
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div>
+                <div class="footer-brand">Copper<em>hand</em> Studio</div>
+                <div class="footer-copy">© 2026 CopperHand Studio. All rights reserved.</div>
+            </div>
+            <div class="footer-links">
+                <a href="privacy-play.html">Privacy Policy (Android)</a>
+                <a href="privacy-appstore.html">Privacy Policy (iOS)</a>
+                <a href="#games">Our Games</a>
+                <a href="#contact">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Nav
+        const hamburger = document.getElementById('hamburger');
+        const navLinks  = document.getElementById('navLinks');
+        hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => navLinks.classList.remove('open'));
+        });
+
+        // Scroll Reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const siblings = [...entry.target.parentElement.children]
+                        .filter(el => el.classList.contains('reveal'));
+                    const idx = siblings.indexOf(entry.target);
+                    entry.target.style.transitionDelay = `${idx * 0.09}s`;
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Nav border on scroll
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            nav.style.borderBottomColor = window.scrollY > 20
+                ? 'rgba(255,255,255,0.07)'
+                : 'transparent';
+        }, { passive: true });
+    </script>
 
 </body>
 </html>

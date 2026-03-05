@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ============================================
+         SAYFA BAŞLIĞI — İstediğin gibi değiştir
+         ============================================ -->
+    <title>Penguin Math — Privacy Policy (Google Play)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:            #080808;
+            --bg-card:       #101010;
+            --accent:        #FF6B2B;
+            --accent-dim:    rgba(255, 107, 43, 0.11);
+            --text:          #EBEBEB;
+            --text-muted:    #5a5a5a;
+            --text-dim:      #909090;
+            --border:        rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(255, 107, 43, 0.26);
+            --font:          'Outfit', sans-serif;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 180px 180px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* Header */
+        .page-header {
+            border-bottom: 1px solid var(--border);
+            background: rgba(8,8,8,0.95);
+            backdrop-filter: blur(20px);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            font-family: var(--font);
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .header-logo em { color: var(--accent); font-style: normal; }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s;
+            letter-spacing: 0.01em;
+        }
+
+        .back-btn:hover { color: var(--accent); }
+
+        /* Content */
+        main {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem;
+        }
+
+        /* Platform badge */
+        .platform-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 100px;
+            border: 1px solid var(--border-accent);
+            background: var(--accent-dim);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.25rem;
+        }
+
+        /* Page title block */
+        .page-title-block { margin-bottom: 2.5rem; }
+
+        .page-game-name {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        h1 {
+            font-family: var(--font);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .last-updated {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* Divider */
+        .section-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 2.5rem 0;
+        }
+
+        /* Policy content */
+        .policy-content h2 {
+            font-family: var(--font);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.01em;
+            margin: 2rem 0 0.6rem;
+            padding-top: 0.25rem;
+        }
+
+        .policy-content h2:first-child { margin-top: 0; }
+
+        .policy-content p {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--text-dim);
+            line-height: 1.85;
+            margin-bottom: 0.75rem;
+        }
+
+        .policy-content ul {
+            padding-left: 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .policy-content li {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.85;
+            margin-bottom: 0.2rem;
+        }
+
+        .policy-content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .policy-content a:hover { text-decoration: underline; }
+
+        .contact-box {
+            margin-top: 2.5rem;
+            padding: 1.35rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .contact-box p { margin: 0; }
+        .contact-box strong { color: var(--text); }
+
+        /* Footer */
+        .page-footer {
+            border-top: 1px solid var(--border);
+            padding: 1.75rem 2rem;
+            background: #050505;
+        }
+
+        .page-footer-inner {
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .page-footer-copy { font-size: 0.75rem; color: var(--text-muted); opacity: 0.6; }
+
+        .page-footer a {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .page-footer a:hover { color: var(--accent); }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+
+        @media (max-width: 600px) {
+            main { padding: 2.5rem 1.25rem 5rem; }
+            .page-header { padding: 0 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="page-header">
+        <a href="index.html" class="header-logo">Copper<em>hand</em></a>
+        <a href="index.html" class="back-btn">Back to Studio</a>
+    </header>
+
+    <main>
+        <div class="platform-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3.18 23.5c.41.23.87.27 1.29.12L15.54 12 12 8.46 3.18 23.5z" fill="#EA4335"/><path d="M20.53 10.26L17.7 8.7 13.84 12l3.86 3.3 2.83-1.56A1.7 1.7 0 0 0 20.53 10.26z" fill="#FBBC05"/><path d="M4.47.38A1.7 1.7 0 0 0 3.18.5L12 8.46l3.54-3.54L4.47.38z" fill="#4285F4"/><path d="M3.18.5a1.7 1.7 0 0 0-.68 1.5v20A1.7 1.7 0 0 0 3.18 23.5L12 12 3.18.5z" fill="#34A853"/></svg>
+            Google Play · Android
+        </div>
+
+        <div class="page-title-block">
+            <span class="page-game-name">Penguin Math Race: Kids Game</span>
+            <h1>Privacy Policy</h1>
+            <span class="last-updated">Last updated: February 2026</span>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="policy-content">
+            <p><strong>Penguin Math Race: Kids Game</strong> is developed and published by <strong>CopperHand Studio</strong>, an independent developer located in Türkiye, operating under the <strong>Third Axis Games</strong> creative label.</p>
+
+            <h2>1. Overview</h2>
+            <p>Our priority is providing a safe and fun learning environment for children. This app is free to play and supported by family-friendly advertisements. We comply with strict data protection laws, including COPPA.</p>
+
+            <h2>2. Data Collection (COPPA Compliance)</h2>
+            <p>We do <strong>not</strong> knowingly collect any personal information (such as name, email, or phone number) from users. For parents: This app uses <strong>Google AdMob</strong>. We have configured all ad requests for <strong>Child-Directed Treatment (COPPA)</strong>.</p>
+            <p>The Google AdMob SDK may process certain non-personal technical data:</p>
+            <ul>
+                <li><strong>Device Identifiers:</strong> Used strictly for frequency capping and fraud prevention.</li>
+                <li><strong>Network Information:</strong> To check internet connectivity.</li>
+                <li><strong>Approximate Location:</strong> Derived from IP address for security and safe ad delivery.</li>
+            </ul>
+
+            <h2>3. Advertising and Families Policy</h2>
+            <p>We strictly adhere to the Google Play Families Policy:</p>
+            <ul>
+                <li>We only use Google Play Certified Ad SDKs (AdMob).</li>
+                <li>We serve only <strong>Non-Personalized Ads</strong> (not based on user behavior).</li>
+                <li>Ad content is filtered for general audiences (G) and children.</li>
+            </ul>
+
+            <h2>4. Safety & External Links</h2>
+            <p>To ensure a safe environment, the app contains: <strong>No In-App Purchases</strong>, <strong>No Social Media Links</strong>, and <strong>No User Chat</strong> features.</p>
+
+            <h2>5. Intellectual Property & AI Usage</h2>
+            <p>All game materials were created by CopperHand Studio. Some assets were produced with the assistance of licensed AI tools, reviewed and finalized by the developer. CopperHand Studio asserts full ownership for in-game use.</p>
+
+            <h2>6. Data Safety Summary (Google Play)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Collected?</th>
+                        <th>Shared?</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Personal Info</td>
+                        <td>No</td>
+                        <td>No</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>Device IDs</td>
+                        <td>Yes</td>
+                        <td>Yes (via SDK)</td>
+                        <td>App Functionality, Fraud Prevention</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="contact-box">
+                <h2>Contact Us</h2>
+                <p>If you have any questions about your child's privacy, please reach out:<br>
+                <strong>copperhandstudio1@gmail.com</strong></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="page-footer">
+        <div class="page-footer-inner">
+            <span class="page-footer-copy">© 2026 Copperhand Studio.</span>
+            <div style="display:flex; gap:1.5rem;">
+                <a href="index.html">Back to Studio</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
