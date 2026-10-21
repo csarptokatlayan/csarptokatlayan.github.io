@@ -1,0 +1,259 @@
+---
+import Base from '../../layouts/Base.astro';
+import Engraving from '../../components/Engraving.astro';
+import Words from '../../components/Words.astro';
+import Proof from '../../components/Proof.astro';
+import Swatches from '../../components/Swatches.astro';
+import { fill, href, localeParams, pick, useTranslations, type Locale } from '../../i18n';
+import { getGames, pickFeatured, swatches } from '../../lib/games';
+import { studio } from '../../lib/studio';
+
+export const getStaticPaths = localeParams;
+
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+const games = await getGames();
+const featured = pickFeatured(games);
+const newestFirst = [...games].reverse();
+
+const platformName = (id: string) => (t.platforms as Record<string, string>)[id] ?? id;
+const platformList = (ids: string[]) => ids.map(platformName).join(' · ');
+const allPlatforms = [...new Set(games.flatMap((g) => g.data.platforms))];
+const year = (d?: Date) => (d ? String(d.getUTCFullYear()) : '—');
+
+// Words after the comma in the headline are printed in copper.
+const inkFrom = t.home.title.split(',')[0].trim().split(/\s+/).length;
+const [mailUser, mailDomain] = studio.email.split('@');
+---
+
+<Base locale={locale} title={t.meta.homeTitle} description={t.meta.homeDescription} current="home">
+  <section class="hero" aria-labelledby="hero-title" data-engrave-host>
+    <Engraving />
+    <div class="wrap hero__grid">
+      <div class="hero__text">
+        <p class="label label--copper hero__kicker" data-reveal style="--d:0">{t.home.kicker}</p>
+        <Words as="h1" id="hero-title" class="hero__title" text={t.home.title} inkFrom={inkFrom} delay={120} />
+        <p class="hero__lede" data-reveal style="--d:700">{t.home.lede}</p>
+      </div>
+      <dl class="hero__facts">
+        <div class="rule" data-reveal="rule" style="--d:500"></div>
+        <div class="hero__fact" data-reveal style="--d:800">
+          <dt class="label">{t.home.catalogueTitle}</dt>
+          <dd>{fill(t.home.catalogueCount, { n: games.length })}</dd>
+        </div>
+        <div class="hero__fact" data-reveal style="--d:900">
+          <dt class="label">{t.catalogue.platforms}</dt>
+          <dd>{platformList(allPlatforms)}</dd>
+        </div>
+        <div class="hero__fact" data-reveal style="--d:1000">
+          <dt class="label">{t.home.basedLabel}</dt>
+          <dd>{t.home.basedValue}</dd>
+        </div>
+        <div class="hero__fact" data-reveal style="--d:1100">
+          <dt class="label">{t.nav.contact}</dt>
+          <dd><a class="sweep" href={`mailto:${studio.email}`}>{studio.email}</a></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  {featured && <div class="wrap feature"><Proof game={featured} locale={locale} label={t.home.featuredLabel} eager /></div>}
+
+  <section class="wrap index" aria-labelledby="index-title">
+    <div class="section-head">
+      <Words id="index-title" class="section-title" text={t.home.catalogueTitle} />
+      <a class="link-arrow" href={href(locale, '/games/')} data-reveal>{t.nav.games}</a>
+    </div>
+    <div class="index__cols label" aria-hidden="true" data-reveal="fade">
+      <span>{t.catalogue.number}</span>
+      <span>{t.catalogue.title}</span>
+      <span>{t.catalogue.genre}</span>
+      <span>{t.catalogue.platforms}</span>
+      <span>{t.catalogue.year}</span>
+    </div>
+    <div class="rule" data-reveal="rule"></div>
+    <ol class="index__list">
+      {
+        newestFirst.map((g, i) => (
+          <li class="index__row" data-reveal style={`--d:${i * 90}`}>
+            <span class="index__no">{g.number}</span>
+            <a class="index__title" href={href(locale, `/games/${g.id}/`)}>
+              {pick(g.data.name, locale)}
+            </a>
+            <span class="index__cell index__genre">{pick(g.data.genre, locale)}</span>
+            <span class="index__cell index__platforms">{platformList(g.data.platforms)}</span>
+            <span class="index__cell index__year">
+              {year(g.released)}
+              <Swatches colors={swatches(g.data.theme)} label={fill(t.plate.palette, { name: pick(g.data.name, locale) })} />
+            </span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap split" aria-labelledby="studio-title">
+    <div class="rule split__rule" data-reveal="rule"></div>
+    <Words id="studio-title" class="section-title" text={t.home.studioTitle} />
+    <div class="split__body">
+      <p class="split__text" data-reveal style="--d:150">{t.studio.intro}</p>
+      <a class="link-arrow" href={href(locale, '/about/')} data-reveal style="--d:250">{t.home.studioLink}</a>
+    </div>
+  </section>
+
+  <section class="wrap split contact" aria-labelledby="contact-title">
+    <div class="rule split__rule" data-reveal="rule"></div>
+    <Words id="contact-title" class="section-title" text={t.home.contactTitle} />
+    <div class="split__body">
+      <p class="contact__lede" data-reveal style="--d:150">{t.home.contactLede}</p>
+      <a class="contact__mail" href={`mailto:${studio.email}`} data-reveal style="--d:250">{mailUser}@<wbr />{mailDomain}</a>
+      <a class="link-arrow" href={href(locale, '/contact/')} data-reveal style="--d:350">{t.nav.contact}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero ------------------------------------------------------- */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: end;
+    padding-block: clamp(3.5rem, 10vw, 8.5rem) clamp(3rem, 7vw, 5.5rem);
+  }
+  .hero__kicker { margin-bottom: 1.6rem; }
+  :global(.hero__title) {
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 7.4vw, 6.6rem);
+    line-height: 0.97;
+    letter-spacing: -0.025em;
+    max-width: 13ch;
+  }
+  .hero__lede {
+    margin-top: 1.8rem;
+    max-width: 46ch;
+    font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+    color: var(--muted);
+  }
+  .hero__facts { display: grid; }
+  .hero__fact {
+    display: grid;
+    gap: 0.2rem;
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero__fact dd { font-size: 0.975rem; overflow-wrap: anywhere; }
+
+  .feature { margin-top: clamp(0rem, 2vw, 1rem); }
+
+  /* Catalogue index -------------------------------------------- */
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.6rem;
+  }
+  .index { margin-top: clamp(4.5rem, 10vw, 8rem); }
+  .index__cols, .index__row {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 2fr) minmax(0, 1.2fr) minmax(0, 1.2fr) 8rem;
+    gap: 1rem;
+    align-items: center;
+  }
+  .index__cols { padding-bottom: 0.7rem; }
+  .index__list { list-style: none; padding: 0; }
+  .index__row {
+    position: relative;
+    padding-block: 1.15rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  /* A copper rule runs under the row being pointed at. */
+  .index__row::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--copper);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s var(--ease-out);
+  }
+  .index__row:hover::after, .index__row:focus-within::after { transform: none; }
+  .index__no {
+    font-family: var(--font-mono);
+    font-stretch: 87.5%;
+    font-size: 0.8125rem;
+    color: var(--copper);
+  }
+  .index__title {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    line-height: 1.15;
+    text-decoration: none;
+    transition: translate 0.5s var(--ease-out), color 0.3s;
+  }
+  .index__row:hover .index__title { translate: 8px 0; color: var(--copper-hi); }
+  .index__title::after { content: ''; position: absolute; inset: 0; }
+  .index__cell { color: var(--muted); font-size: 0.9375rem; }
+  .index__year { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+  .index__year :global(.swatches) { align-items: center; height: 18px; }
+  .index__year :global(.swatches li) {
+    width: 8px;
+    height: 8px;
+    transition: height 0.4s var(--ease-out);
+  }
+  .index__row:hover .index__year :global(.swatches li) { height: 18px; }
+
+  /* Studio + contact ------------------------------------------- */
+  .split {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: 1.5rem clamp(2rem, 6vw, 6rem);
+    margin-top: clamp(4.5rem, 10vw, 8rem);
+    padding-top: 1.6rem;
+  }
+  .split__rule {
+    position: absolute;
+    top: 0;
+    left: var(--gutter);
+    right: var(--gutter);
+  }
+  .split__body { display: grid; gap: 1.4rem; justify-items: start; max-width: 60ch; }
+  .split__text { font-size: clamp(1.1rem, 1.6vw, 1.35rem); line-height: 1.5; }
+  .contact__lede { color: var(--muted); }
+  .contact__mail {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3.6vw, 2.75rem);
+    line-height: 1.05;
+    text-decoration: none;
+    background: linear-gradient(var(--copper), var(--copper)) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.5s var(--ease-out), color 0.3s, opacity 0.9s var(--ease-out), translate 0.9s var(--ease-out);
+  }
+  .contact__mail:hover { color: var(--copper-hi); background-size: 100% 1px; }
+
+  /* Small screens ---------------------------------------------- */
+  @media (max-width: 860px) {
+    .hero__grid { grid-template-columns: 1fr; }
+    .index__cols { display: none; }
+    .index__row {
+      grid-template-columns: auto 1fr;
+      grid-template-areas: 'no year' 'title title' 'genre genre' 'platforms platforms';
+      gap: 0.25rem 1rem;
+    }
+    .index__no { grid-area: no; }
+    .index__title { grid-area: title; }
+    .index__genre { grid-area: genre; }
+    .index__platforms { grid-area: platforms; }
+    .index__year { grid-area: year; justify-self: end; }
+    .split { grid-template-columns: 1fr; }
+  }
+</style>

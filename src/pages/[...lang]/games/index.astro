@@ -1,0 +1,40 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Words from '../../../components/Words.astro';
+import Proof from '../../../components/Proof.astro';
+import { fill, localeParams, useTranslations, type Locale } from '../../../i18n';
+import { getGames } from '../../../lib/games';
+
+export const getStaticPaths = localeParams;
+
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+const newestFirst = [...(await getGames())].reverse();
+---
+
+<Base locale={locale} title={t.meta.gamesTitle} description={t.meta.gamesDescription} current="games">
+  <header class="wrap page-head games-head">
+    <div>
+      <p class="label label--copper" data-reveal>{t.games.kicker}</p>
+      <Words as="h1" class="page-title" text={t.games.title} delay={80} />
+      <p class="page-lede" data-reveal style="--d:450">{t.games.lede}</p>
+    </div>
+    <p class="games-count label" data-reveal style="--d:600">{fill(t.games.count, { n: newestFirst.length })}</p>
+  </header>
+
+  <div class="wrap plates">
+    {newestFirst.map((game, i) => <Proof game={game} locale={locale} eager={i === 0} flip={i % 2 === 1} />)}
+  </div>
+</Base>
+
+<style>
+  .games-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .games-count { padding-bottom: 0.4rem; }
+  .plates { display: grid; gap: clamp(3rem, 8vw, 6rem); }
+</style>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://copperhandstudio.com/sitemap-index.xml

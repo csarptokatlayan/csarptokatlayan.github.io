@@ -1,0 +1,247 @@
+---
+// A game shown as a printer's proof: greyscale print in copper ink, with
+// its catalogue number, spec line and palette. When it scrolls into view a
+// roller passes over it and lays the print down; hovering (or scrolling on
+// touch screens) reveals the game's real colours. Links to the game page.
+import { Image } from 'astro:assets';
+import CropMarks from './CropMarks.astro';
+import Swatches from './Swatches.astro';
+import { fill, href, pick, useTranslations, type Locale } from '../i18n';
+import { swatches, type Game } from '../lib/games';
+
+interface Props {
+  game: Game;
+  locale: Locale;
+  label?: string;
+  level?: 'h2' | 'h3';
+  eager?: boolean;
+  flip?: boolean;
+}
+const { game, locale, label, level: Heading = 'h2', eager = false, flip = false } = Astro.props;
+const t = useTranslations(locale);
+const d = game.data;
+const name = pick(d.name, locale);
+const platformName = (id: string) => (t.platforms as Record<string, string>)[id] ?? id;
+const digits = game.number.replace('CH-', '');
+const titleId = `proof-${game.id}`;
+---
+
+<section class="sheet" aria-labelledby={titleId}>
+  <div class="sheet-head">
+    <p class="label">{label ?? pick(d.genre, locale)}</p>
+    <p class="label">{game.number}</p>
+  </div>
+  <article class:list={['plate', 'proof', { 'proof--flip': flip }]} data-reveal>
+    <CropMarks />
+    <div class="proof__art">
+      <div class="proof__print">
+        <Image
+          src={d.cover}
+          alt={pick(d.coverAlt, locale)}
+          widths={[640, 1024]}
+          sizes="(max-width: 860px) 100vw, 58vw"
+          loading={eager ? 'eager' : 'lazy'}
+          fetchpriority={eager ? 'high' : 'auto'}
+          style={`view-transition-name: cover-${game.id}`}
+        />
+        <span class="proof__ink" aria-hidden="true"></span>
+      </div>
+      <span class="proof__roller" aria-hidden="true"></span>
+    </div>
+    <div class="proof__body">
+      <p class="proof__no" aria-hidden="true" data-count={digits}>{digits}</p>
+      <Heading id={titleId} class="proof__title">
+        <a href={href(locale, `/games/${game.id}/`)} style={`view-transition-name: title-${game.id}`}>{name}</a>
+      </Heading>
+      <p class="proof__tagline">{pick(d.tagline, locale)}</p>
+      <dl class="proof__spec">
+        <div>
+          <dt class="label">{t.catalogue.genre}</dt>
+          <dd>{pick(d.genre, locale)}</dd>
+        </div>
+        <div>
+          <dt class="label">{t.catalogue.platforms}</dt>
+          <dd>{d.platforms.map(platformName).join(' · ')}</dd>
+        </div>
+        <div>
+          <dt class="label">{t.catalogue.year}</dt>
+          <dd>{game.released ? game.released.getUTCFullYear() : '—'}</dd>
+        </div>
+      </dl>
+      <span class="link-arrow proof__open" aria-hidden="true">{t.home.open} {game.number}</span>
+    </div>
+  </article>
+  <div class="sheet-foot">
+    <Swatches colors={swatches(d.theme)} label={fill(t.plate.palette, { name })} />
+  </div>
+</section>
+
+<script>
+  // Count the catalogue number up from 000 when the plate comes into view.
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+  if (!reduced && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          io.unobserve(e.target);
+          const el = e.target as HTMLElement;
+          const target = Number(el.dataset.count);
+          const width = el.dataset.count!.length;
+          const begin = performance.now() + 450;
+          const tick = (now: number) => {
+            const p = Math.min(Math.max((now - begin) / 900, 0), 1);
+            const value = Math.round(target * (1 - Math.pow(1 - p, 3)));
+            el.textContent = String(value).padStart(width, '0');
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          el.textContent = '0'.repeat(width);
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.3 },
+    );
+    counters.forEach((el) => io.observe(el));
+  }
+</script>
+
+<style>
+  .sheet-head, .sheet-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 0.9rem;
+    padding-inline: calc(var(--mark) + 4px);
+  }
+  .sheet-foot { justify-content: flex-end; }
+
+  .proof {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    margin-inline: calc(var(--mark) + 4px);
+    background: var(--ink-2);
+    border: 1px solid var(--rule);
+    transition: border-color 0.5s var(--ease-out), opacity 0.9s var(--ease-out), translate 0.9s var(--ease-out);
+  }
+  .proof--flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr); }
+  .proof--flip .proof__art { order: 2; }
+
+  .proof__art {
+    position: relative;
+    overflow: hidden;
+    background: var(--ink-3);
+  }
+  .proof__print { position: relative; height: 100%; }
+  .proof__art :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.08) brightness(0.92);
+    transition: filter 0.8s var(--ease-out), transform 1.4s var(--ease-out);
+  }
+  /* Copper ink over a greyscale print: the default, unopened state. */
+  .proof__ink {
+    position: absolute;
+    inset: 0;
+    background: var(--copper);
+    mix-blend-mode: color;
+    opacity: 0.9;
+    transition: opacity 0.8s var(--ease-out);
+  }
+
+  /* The press: the print is laid down behind a roller as it crosses. */
+  .proof__roller {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    background: var(--copper-hi);
+    box-shadow: 0 0 24px 6px rgb(232 162 108 / 0.35);
+    opacity: 0;
+    pointer-events: none;
+  }
+  :global(.js) .proof:not(.is-in) .proof__print { clip-path: inset(0 100% 0 0); }
+  :global(.js) .proof.is-in .proof__print { animation: lay 1.25s 0.25s cubic-bezier(0.65, 0, 0.35, 1) both; }
+  :global(.js) .proof.is-in .proof__roller { animation: roll 1.25s 0.25s cubic-bezier(0.65, 0, 0.35, 1) both; }
+  @keyframes lay { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes roll {
+    0% { left: 0; opacity: 1; }
+    88% { opacity: 1; }
+    100% { left: calc(100% - 3px); opacity: 0; }
+  }
+
+  .proof__body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: clamp(1.4rem, 3.2vw, 2.6rem);
+  }
+  .proof__no {
+    font-family: var(--font-mono);
+    font-stretch: 75%;
+    font-weight: 200;
+    font-size: clamp(3.5rem, 7vw, 6rem);
+    line-height: 0.8;
+    color: var(--copper);
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .proof__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.6vw, 3.2rem);
+  }
+  .proof__title a { text-decoration: none; }
+  .proof__title a::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+  .proof__title a:focus-visible { outline: none; }
+  .proof:has(.proof__title a:focus-visible) { outline: 2px solid var(--copper-hi); outline-offset: 4px; }
+  .proof__tagline { color: var(--muted); max-width: 34ch; }
+  .proof__spec {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+    gap: 0.4rem 1.6rem;
+    margin-top: auto;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+  }
+  .proof__spec dd { font-size: 0.925rem; }
+  .proof__open { margin-top: 0.4rem; }
+
+  /* Lift the proof towards the reader on hover and show its real colours. */
+  .proof__body > * { transition: translate 0.6s var(--ease-out); }
+  .proof:hover .proof__art :global(img),
+  .proof:focus-within .proof__art :global(img) { filter: none; transform: scale(1.035); }
+  .proof:hover .proof__ink,
+  .proof:focus-within .proof__ink { opacity: 0; }
+  .proof:hover, .proof:focus-within { border-color: var(--rule-strong); }
+  .proof:hover .proof__title, .proof:focus-within .proof__title { translate: 6px 0; }
+  .proof:hover .proof__open::after { transform: translateX(6px); }
+  .proof:hover :global(.crop) { color: var(--copper-hi); }
+
+  /* Touch screens have no hover: the print inks itself as it scrolls in. */
+  @media (hover: none) {
+    @supports (animation-timeline: view()) {
+      .proof__art :global(img) { animation: ink-img linear both; animation-timeline: view(); animation-range: entry 60% cover 50%; }
+      .proof__ink { animation: ink-cover linear both; animation-timeline: view(); animation-range: entry 60% cover 50%; }
+    }
+  }
+  @keyframes ink-img { from { filter: grayscale(1) contrast(1.08) brightness(0.92); } to { filter: none; } }
+  @keyframes ink-cover { from { opacity: 0.9; } to { opacity: 0; } }
+
+  @media (max-width: 860px) {
+    .proof, .proof--flip { grid-template-columns: 1fr; }
+    .proof--flip .proof__art { order: 0; }
+    .proof__art { aspect-ratio: 1024 / 500; }
+  }
+  @media (max-width: 520px) {
+    .proof__spec { grid-template-columns: 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .proof:not(.is-in) .proof__print { clip-path: none; }
+    :global(.js) .proof.is-in .proof__print,
+    :global(.js) .proof.is-in .proof__roller { animation: none; }
+  }
+</style>

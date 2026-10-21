@@ -1,0 +1,66 @@
+---
+import { useTranslations, type Locale } from '../i18n';
+import { studio } from '../lib/studio';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const year = new Date().getFullYear();
+---
+
+<footer class="colophon">
+  <div class="wrap colophon__inner">
+    <p class="colophon__name">CopperHand <span>Studio</span></p>
+    <ul class="colophon__links">
+      <li><a class="sweep" href={`mailto:${studio.email}`}>{studio.email}</a></li>
+      {studio.social.map((s) => <li><a class="sweep" href={s.url} rel="me">{s.label}</a></li>)}
+    </ul>
+    <ul class="colophon__links">
+      <li><a class="sweep" href="/privacy-play.html">{t.footer.privacyPlay}</a></li>
+      <li><a class="sweep" href="/privacy-appstore.html">{t.footer.privacyAppStore}</a></li>
+    </ul>
+    <p class="label colophon__legal">© {year} CopperHand Studio. {t.footer.rights} {t.footer.made}</p>
+  </div>
+</footer>
+
+<style>
+  .colophon {
+    margin-top: clamp(4rem, 10vw, 8rem);
+    border-top: 1px solid var(--rule);
+    view-transition-name: colophon;
+  }
+  .colophon__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 0.8fr);
+    gap: 2rem clamp(2rem, 6vw, 6rem);
+    padding-block: 2.5rem 2rem;
+  }
+  .colophon__name {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .colophon__name span { color: var(--copper); }
+  .colophon__links {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+    font-size: 0.9375rem;
+  }
+  .colophon__links a {
+    color: var(--muted);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .colophon__legal {
+    grid-column: 1 / -1;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  @media (max-width: 720px) {
+    .colophon__inner { grid-template-columns: 1fr; }
+  }
+</style>

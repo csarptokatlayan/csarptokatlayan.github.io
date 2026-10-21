@@ -1,0 +1,180 @@
+{
+  "meta": {
+    "siteName": "CopperHand Studio",
+    "homeTitle": "CopperHand Studio: independent game studio from Istanbul",
+    "homeDescription": "CopperHand Studio is a one-person game studio founded in Istanbul. Browse the catalogue of released games.",
+    "gamesTitle": "Games | CopperHand Studio",
+    "gamesDescription": "Every game released by CopperHand Studio, numbered in the order it shipped.",
+    "aboutTitle": "About | CopperHand Studio",
+    "aboutDescription": "CopperHand Studio is a one-person game studio founded in Istanbul. One developer designs, builds and ships every game.",
+    "contactTitle": "Contact | CopperHand Studio",
+    "contactDescription": "Player support, press and business enquiries for CopperHand Studio. One inbox, read by the developer.",
+    "notFoundTitle": "Page not found | CopperHand Studio"
+  },
+  "nav": {
+    "skip": "Skip to content",
+    "home": "CopperHand Studio, home",
+    "games": "Games",
+    "about": "About",
+    "contact": "Contact",
+    "language": "Language"
+  },
+  "home": {
+    "kicker": "Independent game studio · Istanbul",
+    "title": "Games, each built with a world of its own.",
+    "lede": "CopperHand is a one-person studio from Istanbul. Every release gets a catalogue number, a page and its own look. Open one to step inside it.",
+    "featuredLabel": "Latest release",
+    "open": "Open",
+    "catalogueTitle": "Catalogue",
+    "catalogueCount": "{n} released",
+    "basedLabel": "Based in",
+    "basedValue": "Istanbul, Türkiye",
+    "studioTitle": "The studio",
+    "studioLink": "About the studio",
+    "contactTitle": "Write to us",
+    "contactLede": "Player support, press and business all go to one inbox, read by the person who made the games."
+  },
+  "games": {
+    "kicker": "Catalogue",
+    "title": "Games",
+    "lede": "Every game the studio has released, newest first. The number is the order it shipped in.",
+    "count": "{n} in the catalogue"
+  },
+  "plate": {
+    "palette": "Colour palette of {name}"
+  },
+  "catalogue": {
+    "number": "No.",
+    "title": "Title",
+    "genre": "Genre",
+    "platforms": "Platforms",
+    "year": "Year"
+  },
+  "game": {
+    "breadcrumb": "Catalogue",
+    "get": "Get it on",
+    "download": "Download on",
+    "trailer": "Trailer",
+    "playTrailer": "Play the {name} trailer",
+    "screenshots": "Screenshots",
+    "openScreenshot": "Enlarge screenshot {n} of {total}",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "about": "About the game",
+    "details": "Details",
+    "genre": "Genre",
+    "platforms": "Platforms",
+    "released": "Released",
+    "comingSoon": "Coming soon",
+    "number": "Catalogue no.",
+    "links": "Links",
+    "back": "Back to the catalogue",
+    "end": "End of {number}"
+  },
+  "about": {
+    "kicker": "About",
+    "title": "A one-person game studio, founded in Istanbul.",
+    "lede": "CopperHand Studio is a solo developer. Every game in the catalogue is designed, programmed and released by one person, from the first prototype to the store page.",
+    "nameTitle": "Why CopperHand",
+    "name": [
+      "Copper is a metal you work by hand. You hammer it, etch it, engrave it. Before photography, pictures were printed from engraved copper plates, each one cut slowly and numbered in the engraver's catalogue.",
+      "That is the idea behind the studio and this site. Each game is made carefully by one pair of hands, gets a number when it ships, and keeps its own colours and mood. The studio around it stays quiet, so the games can be loud."
+    ],
+    "principlesTitle": "How the studio works",
+    "principles": [
+      {
+        "title": "One person, end to end",
+        "body": "Design, code, testing, store pages and player support are handled by the same developer. When you write in, you reach the person who made the game."
+      },
+      {
+        "title": "Small enough to finish",
+        "body": "Each game is scoped so it can be finished and polished, then kept alive with updates instead of being left behind."
+      },
+      {
+        "title": "Every game its own world",
+        "body": "There is no house style for the games. A math race on the ice and whatever comes next do not have to look alike. Each one is built around what makes it fun to play."
+      }
+    ],
+    "releasesTitle": "Releases",
+    "factsTitle": "Studio facts",
+    "facts": {
+      "founded": "Founded in",
+      "foundedValue": "Istanbul, Türkiye",
+      "team": "Team",
+      "teamValue": "One developer",
+      "engine": "Engine so far",
+      "engineValue": "Unity",
+      "platforms": "Released on",
+      "contact": "Contact"
+    },
+    "cta": "Write to the studio"
+  },
+  "contact": {
+    "kicker": "Contact",
+    "title": "Write to the studio.",
+    "lede": "There is one inbox and the developer reads every message. Pick a topic below and your mail opens with the right subject line.",
+    "copy": "Copy address",
+    "copied": "Copied",
+    "topicsTitle": "What is it about?",
+    "write": "Write about this",
+    "topics": [
+      {
+        "title": "Player support",
+        "subject": "Support: ",
+        "body": "Something not working in one of the games? Mention which game, your device and OS version, and what happened. A screenshot helps."
+      },
+      {
+        "title": "Press and creators",
+        "subject": "Press: ",
+        "body": "Writing about a game, making a video or streaming it? Ask for screenshots, the trailer, or anything else you need."
+      },
+      {
+        "title": "Business",
+        "subject": "Business: ",
+        "body": "Publishing, porting, localisation or another kind of partnership."
+      }
+    ],
+    "elsewhere": "Elsewhere",
+    "location": "Location",
+    "locationValue": "Istanbul, Türkiye (GMT+3)",
+    "policies": "Privacy policies"
+  },
+  "notFound": {
+    "kicker": "404",
+    "title": "There is no page under this number.",
+    "lede": "The link may be old, or the address has a typo.",
+    "home": "Go to the home page",
+    "games": "See all games"
+  },
+  "stores": {
+    "google-play": "Google Play",
+    "app-store": "the App Store",
+    "steam": "Steam",
+    "itch": "itch.io",
+    "epic": "Epic Games Store",
+    "web": "Play in browser",
+    "other": "Store"
+  },
+  "platforms": {
+    "ios": "iOS",
+    "android": "Android",
+    "windows": "Windows",
+    "mac": "macOS",
+    "linux": "Linux",
+    "web": "Web",
+    "switch": "Nintendo Switch",
+    "playstation": "PlayStation",
+    "xbox": "Xbox",
+    "quest": "Meta Quest"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "made": "Made in Istanbul.",
+    "privacyPlay": "Privacy policy (Google Play)",
+    "privacyAppStore": "Privacy policy (App Store)"
+  },
+  "studio": {
+    "intro": "CopperHand Studio is a one-person game studio founded in Istanbul. One developer designs, builds and ships every game in the catalogue, and answers every message that comes in."
+  }
+}

@@ -1,0 +1,142 @@
+---
+import { href, locales, localeNames, useTranslations, defaultLocale, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  current?: string;
+}
+const { locale, current } = Astro.props;
+const t = useTranslations(locale);
+
+const items = [
+  { key: 'games', label: t.nav.games, url: href(locale, '/games/') },
+  { key: 'about', label: t.nav.about, url: href(locale, '/about/') },
+  { key: 'contact', label: t.nav.contact, url: href(locale, '/contact/') },
+];
+
+// Same page in the other language: strip the current prefix, add the new one.
+const rest = Astro.url.pathname.replace(new RegExp(`^/(${locales.join('|')})(?=/|$)`), '') || '/';
+---
+
+<header class="masthead">
+  <div class="wrap masthead__inner">
+    <a class="wordmark" href={href(locale, '/')} aria-label={t.nav.home}>
+      <span class="wordmark__name">CopperHand</span>
+      <span class="wordmark__studio">Studio</span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav">
+        {
+          items.map((item) => (
+            <li>
+              <a href={item.url} aria-current={current === item.key ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    {
+      locales.length > 1 && (
+        <ul class="langs" aria-label={t.nav.language}>
+          {locales.map((l) => (
+            <li>
+              <a
+                href={l === defaultLocale ? rest : `/${l}${rest}`}
+                lang={l}
+                hreflang={l}
+                aria-current={l === locale ? 'true' : undefined}
+                title={localeNames[l]}
+              >
+                {l}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</header>
+
+<style>
+  .masthead {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(23 24 26 / 0.94);
+    border-bottom: 1px solid var(--rule);
+    view-transition-name: masthead;
+  }
+  @supports (backdrop-filter: blur(1px)) {
+    .masthead { background: rgb(23 24 26 / 0.82); backdrop-filter: blur(10px); }
+  }
+  .masthead__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 60px;
+  }
+  .wordmark {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    margin-right: auto;
+    text-decoration: none;
+  }
+  .wordmark__name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .wordmark__name { transition: color 0.3s; }
+  .wordmark:hover .wordmark__name { color: var(--copper-hi); }
+  .wordmark__studio {
+    font-family: var(--font-mono);
+    font-stretch: 87.5%;
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--copper);
+  }
+  .nav, .langs {
+    display: flex;
+    gap: clamp(0.9rem, 2.4vw, 2rem);
+    list-style: none;
+    padding: 0;
+  }
+  .nav a, .langs a {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0;
+    font-family: var(--font-mono);
+    font-stretch: 87.5%;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .nav a:hover, .langs a:hover { color: var(--paper); }
+  .nav a[aria-current='page'], .langs a[aria-current='true'] { color: var(--paper); }
+  .nav a::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0.15rem;
+    height: 1px;
+    background: var(--copper);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.45s var(--ease-out);
+  }
+  .nav a:hover::after { transform: scaleX(1); transform-origin: left; }
+  .nav a[aria-current='page']::after { transform: none; }
+  .langs { gap: 0.75rem; padding-left: 1rem; border-left: 1px solid var(--rule); }
+
+  @media (max-width: 420px) {
+    .wordmark__studio { display: none; }
+    .masthead__inner { gap: 1rem; }
+  }
+</style>

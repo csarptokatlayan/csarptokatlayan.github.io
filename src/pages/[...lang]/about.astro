@@ -1,0 +1,173 @@
+---
+import Base from '../../layouts/Base.astro';
+import Words from '../../components/Words.astro';
+import Engraving from '../../components/Engraving.astro';
+import { href, localeParams, pick, useTranslations, type Locale } from '../../i18n';
+import { getGames } from '../../lib/games';
+import { studio } from '../../lib/studio';
+
+export const getStaticPaths = localeParams;
+
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+const a = t.about;
+const games = await getGames();
+const platformName = (id: string) => (t.platforms as Record<string, string>)[id] ?? id;
+const allPlatforms = [...new Set(games.flatMap((g) => g.data.platforms))].map(platformName).join(', ');
+const releaseDate = (d?: Date) =>
+  d ? d.toLocaleDateString(locale, { year: 'numeric', month: 'short', timeZone: 'UTC' }) : t.game.comingSoon;
+---
+
+<Base locale={locale} title={t.meta.aboutTitle} description={t.meta.aboutDescription} current="about">
+  <header class="about-hero" data-engrave-host>
+    <Engraving />
+    <div class="wrap page-head">
+      <p class="label label--copper" data-reveal>{a.kicker}</p>
+      <Words as="h1" class="page-title" text={a.title} inkFrom={4} delay={80} />
+      <p class="page-lede" data-reveal style="--d:650">{a.lede}</p>
+    </div>
+  </header>
+
+  <section class="wrap two-col" aria-labelledby="name-title">
+    <div class="rule two-col__rule" data-reveal="rule"></div>
+    <Words id="name-title" class="section-title" text={a.nameTitle} />
+    <div class="prose">
+      {a.name.map((p, i) => <p data-reveal style={`--d:${150 + i * 120}`}>{p}</p>)}
+    </div>
+  </section>
+
+  <section class="wrap principles" aria-labelledby="principles-title">
+    <div class="rule" data-reveal="rule"></div>
+    <Words id="principles-title" class="section-title principles__title" text={a.principlesTitle} />
+    <ol class="principles__list">
+      {
+        a.principles.map((p, i) => (
+          <li class="principle" data-reveal style={`--d:${i * 140}`}>
+            <span class="principle__no">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="principle__title">{p.title}</h3>
+            <p class="principle__body">{p.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap two-col" aria-labelledby="releases-title">
+    <div class="rule two-col__rule" data-reveal="rule"></div>
+    <Words id="releases-title" class="section-title" text={a.releasesTitle} />
+    <ol class="releases">
+      {
+        [...games].reverse().map((g, i) => (
+          <li class="release" data-reveal style={`--d:${150 + i * 90}`}>
+            <span class="label">{releaseDate(g.released)}</span>
+            <span class="release__no">{g.number}</span>
+            <a class="release__name sweep" href={href(locale, `/games/${g.id}/`)}>{pick(g.data.name, locale)}</a>
+            <span class="release__meta">{g.data.platforms.map(platformName).join(' · ')}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap two-col" aria-labelledby="facts-title">
+    <div class="rule two-col__rule" data-reveal="rule"></div>
+    <Words id="facts-title" class="section-title" text={a.factsTitle} />
+    <div>
+      <dl class="facts">
+        <div data-reveal style="--d:100"><dt class="label">{a.facts.founded}</dt><dd>{a.facts.foundedValue}</dd></div>
+        <div data-reveal style="--d:180"><dt class="label">{a.facts.team}</dt><dd>{a.facts.teamValue}</dd></div>
+        <div data-reveal style="--d:260"><dt class="label">{a.facts.engine}</dt><dd>{a.facts.engineValue}</dd></div>
+        <div data-reveal style="--d:340"><dt class="label">{a.facts.platforms}</dt><dd>{allPlatforms}</dd></div>
+        <div data-reveal style="--d:420"><dt class="label">{a.facts.contact}</dt><dd><a class="sweep" href={`mailto:${studio.email}`}>{studio.email}</a></dd></div>
+      </dl>
+      <a class="link-arrow cta" href={href(locale, '/contact/')} data-reveal style="--d:500">{a.cta}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .two-col {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: 1.5rem clamp(2rem, 6vw, 6rem);
+    margin-top: clamp(3.5rem, 8vw, 6.5rem);
+    padding-top: 1.6rem;
+  }
+  .two-col__rule { position: absolute; top: 0; left: var(--gutter); right: var(--gutter); }
+  .prose {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 60ch;
+    font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+    line-height: 1.6;
+  }
+
+  .principles { margin-top: clamp(3.5rem, 8vw, 6.5rem); }
+  :global(.principles__title) { margin: 1.6rem 0 2.4rem; }
+  .principles__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 3rem);
+    list-style: none;
+    padding: 0;
+  }
+  .principle {
+    display: grid;
+    align-content: start;
+    gap: 0.8rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+  }
+  .principle__no {
+    font-family: var(--font-mono);
+    font-stretch: 75%;
+    font-weight: 200;
+    font-size: 3rem;
+    line-height: 0.9;
+    color: var(--copper);
+  }
+  .principle__title { font-family: var(--font-display); font-size: 1.5rem; }
+  .principle__body { color: var(--muted); }
+
+  .releases { list-style: none; padding: 0; }
+  .release {
+    display: grid;
+    grid-template-columns: 7rem 5rem minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .release:first-child { border-top: 1px solid var(--rule); }
+  .release__no { font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.8125rem; color: var(--copper); }
+  .release__name { font-family: var(--font-display); font-size: 1.4rem; justify-self: start; }
+  .release__meta { color: var(--muted); font-size: 0.9375rem; }
+
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; }
+  .facts div {
+    display: grid;
+    gap: 0.2rem;
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .facts dd { font-size: 1.05rem; overflow-wrap: anywhere; }
+  .cta { margin-top: 2rem; }
+
+  @media (max-width: 860px) {
+    .two-col { grid-template-columns: 1fr; }
+    .principles__list { grid-template-columns: 1fr; }
+    .release { grid-template-columns: auto 1fr; gap: 0.2rem 1rem; }
+    .release__name { grid-column: 1 / -1; }
+    .release__meta { grid-column: 1 / -1; }
+  }
+  @media (max-width: 520px) {
+    .facts { grid-template-columns: 1fr; }
+  }
+</style>

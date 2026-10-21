@@ -1,0 +1,196 @@
+---
+import Base from '../../layouts/Base.astro';
+import Words from '../../components/Words.astro';
+import { localeParams, useTranslations, type Locale } from '../../i18n';
+import { studio } from '../../lib/studio';
+
+export const getStaticPaths = localeParams;
+
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+const c = t.contact;
+const [mailUser, mailDomain] = studio.email.split('@');
+const mailto = (subject: string) => `mailto:${studio.email}?subject=${encodeURIComponent(subject)}`;
+---
+
+<Base locale={locale} title={t.meta.contactTitle} description={t.meta.contactDescription} current="contact">
+  <header class="wrap page-head">
+    <p class="label label--copper" data-reveal>{c.kicker}</p>
+    <Words as="h1" class="page-title" text={c.title} inkFrom={3} delay={80} />
+    <p class="page-lede" data-reveal style="--d:500">{c.lede}</p>
+  </header>
+
+  <section class="wrap address" aria-label={t.nav.contact}>
+    <div class="rule" data-reveal="rule"></div>
+    <div class="address__row">
+      <a class="address__mail" href={`mailto:${studio.email}`} data-reveal style="--d:200">{mailUser}@<wbr />{mailDomain}</a>
+      <button type="button" class="copy" data-copy={studio.email} data-done={c.copied} data-reveal style="--d:350">
+        <span class="copy__label">{c.copy}</span>
+      </button>
+    </div>
+    <div class="rule" data-reveal="rule" style="--d:150"></div>
+  </section>
+
+  <section class="wrap topics" aria-labelledby="topics-title">
+    <Words id="topics-title" class="section-title" text={c.topicsTitle} />
+    <ol class="topics__list">
+      {
+        c.topics.map((topic, i) => (
+          <li class="topic" data-reveal style={`--d:${i * 120}`}>
+            <span class="topic__no">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="topic__title">{topic.title}</h3>
+            <p class="topic__body">{topic.body}</p>
+            <a class="link-arrow topic__link" href={mailto(topic.subject)}>
+              {c.write}
+              <span class="visually-hidden">: {topic.title}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap side" aria-label={c.elsewhere}>
+    <dl class="side__list">
+      <div data-reveal>
+        <dt class="label">{c.location}</dt>
+        <dd>{c.locationValue}</dd>
+      </div>
+      <div data-reveal style="--d:100">
+        <dt class="label">{c.elsewhere}</dt>
+        <dd>
+          <ul class="plain">
+            {studio.social.map((s) => <li><a class="sweep" href={s.url} rel="me">{s.label}</a></li>)}
+          </ul>
+        </dd>
+      </div>
+      <div data-reveal style="--d:200">
+        <dt class="label">{c.policies}</dt>
+        <dd>
+          <ul class="plain">
+            <li><a class="sweep" href="/privacy-play.html">{t.footer.privacyPlay}</a></li>
+            <li><a class="sweep" href="/privacy-appstore.html">{t.footer.privacyAppStore}</a></li>
+          </ul>
+        </dd>
+      </div>
+    </dl>
+  </section>
+</Base>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-copy]')) {
+    const label = button.querySelector('.copy__label')!;
+    const idle = label.textContent;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy!);
+        label.textContent = button.dataset.done!;
+        button.classList.add('is-done');
+        setTimeout(() => {
+          label.textContent = idle;
+          button.classList.remove('is-done');
+        }, 1800);
+      } catch {
+        // Clipboard blocked: the address is still a normal mailto link.
+      }
+    });
+  }
+</script>
+
+<style>
+  .address__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding-block: clamp(1.4rem, 3vw, 2.4rem);
+  }
+  .address__mail {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    background: linear-gradient(var(--copper), var(--copper)) 0 100% / 0 2px no-repeat;
+    transition: background-size 0.6s var(--ease-out), color 0.3s, opacity 0.9s var(--ease-out), translate 0.9s var(--ease-out);
+  }
+  .address__mail:hover { color: var(--copper-hi); background-size: 100% 2px; }
+  .copy {
+    position: relative;
+    min-height: 2.75rem;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--rule-strong);
+    background: transparent;
+    font-family: var(--font-mono);
+    font-stretch: 87.5%;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--paper);
+    cursor: pointer;
+    overflow: hidden;
+    isolation: isolate;
+    transition: border-color 0.3s, color 0.3s, opacity 0.9s var(--ease-out), translate 0.9s var(--ease-out);
+  }
+  .copy::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--copper);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease-out);
+  }
+  .copy:hover { border-color: var(--copper); }
+  .copy.is-done { color: var(--ink); border-color: var(--copper); }
+  .copy.is-done::before { transform: none; }
+
+  .topics { margin-top: clamp(3.5rem, 8vw, 6rem); }
+  .topics__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 3rem);
+    margin-top: 2rem;
+    list-style: none;
+    padding: 0;
+  }
+  .topic {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 0.8rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule-strong);
+  }
+  .topic__no {
+    font-family: var(--font-mono);
+    font-stretch: 75%;
+    font-weight: 200;
+    font-size: 3rem;
+    line-height: 0.9;
+    color: var(--copper);
+  }
+  .topic__title { font-family: var(--font-display); font-size: 1.6rem; }
+  .topic__body { color: var(--muted); }
+  .topic__link { margin-top: 0.6rem; }
+
+  .side { margin-top: clamp(3.5rem, 8vw, 6rem); }
+  .side__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem clamp(1.5rem, 3vw, 3rem);
+  }
+  .side__list > div {
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+  }
+  .plain { list-style: none; padding: 0; display: grid; gap: 0.3rem; }
+
+  @media (max-width: 860px) {
+    .topics__list, .side__list { grid-template-columns: 1fr; }
+  }
+</style>

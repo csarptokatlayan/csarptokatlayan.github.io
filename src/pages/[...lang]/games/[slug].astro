@@ -1,0 +1,332 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../../../layouts/Base.astro';
+import CropMarks from '../../../components/CropMarks.astro';
+import Swatches from '../../../components/Swatches.astro';
+import StoreButton from '../../../components/StoreButton.astro';
+import Trailer from '../../../components/Trailer.astro';
+import Gallery from '../../../components/Gallery.astro';
+import Ambient from '../../../components/Ambient.astro';
+import '../../../styles/game-plate.css';
+import { defaultLocale, fill, href, locales, pick, useTranslations, type Locale } from '../../../i18n';
+import { getGames, swatches, themeFontUrl, themeStyle, youtubeId, type Game } from '../../../lib/games';
+
+export async function getStaticPaths() {
+  const games = await getGames();
+  return locales.flatMap((locale) =>
+    games.map((game) => ({
+      params: { lang: locale === defaultLocale ? undefined : locale, slug: game.id },
+      props: { locale, game },
+    })),
+  );
+}
+
+const { locale, game } = Astro.props as { locale: Locale; game: Game };
+const t = useTranslations(locale);
+const d = game.data;
+const theme = d.theme;
+
+const name = pick(d.name, locale);
+const tagline = pick(d.tagline, locale);
+const paragraphs = pick(d.description, locale).split(/\n\s*\n/).filter(Boolean);
+const platformName = (id: string) => (t.platforms as Record<string, string>)[id] ?? id;
+const platforms = d.platforms.map(platformName);
+const releasedText = game.released
+  ? game.released.toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })
+  : t.game.comingSoon;
+const shots = d.screenshots.map((s) => ({ src: s.src, alt: pick(s.alt, locale) }));
+const trailerId = d.trailer ? youtubeId(d.trailer.youtube) : undefined;
+
+const og = await getImage({ src: d.cover, width: 1200, format: 'jpg' });
+const fontStack = theme.font ? `'${theme.font.family}', sans-serif` : undefined;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoGame',
+  name,
+  description: tagline,
+  genre: pick(d.genre, locale),
+  gamePlatform: platforms,
+  operatingSystem: platforms.join(', '),
+  applicationCategory: 'Game',
+  ...(d.releaseDate && game.released ? { datePublished: d.releaseDate } : {}),
+  image: new URL(og.src, Astro.site).href,
+  url: new URL(Astro.url.pathname, Astro.site).href,
+  author: { '@type': 'Organization', name: 'CopperHand Studio', url: Astro.site?.href },
+  ...(trailerId ? { trailer: { '@type': 'VideoObject', name: `${name} trailer`, embedUrl: `https://www.youtube.com/embed/${trailerId}`, thumbnailUrl: `https://i.ytimg.com/vi/${trailerId}/maxresdefault.jpg` } } : {}),
+};
+---
+
+<Base
+  locale={locale}
+  title={`${name} | CopperHand Studio`}
+  description={tagline}
+  image={og.src}
+  imageAlt={pick(d.coverAlt, locale)}
+  type="article"
+  fontUrl={themeFontUrl(theme)}
+  jsonLd={jsonLd}
+  current="games"
+>
+  <div class="wrap">
+    <div class="sheet-head">
+      <nav aria-label="Breadcrumb">
+        <ol class="crumbs label">
+          <li><a href={href(locale, '/games/')}>{t.game.breadcrumb}</a></li>
+          <li aria-current="page">{game.number}</li>
+        </ol>
+      </nav>
+      <Swatches colors={swatches(theme)} label={fill(t.plate.palette, { name })} />
+    </div>
+  </div>
+
+  <div class="sheet">
+    <article class="plate plate--game" style={themeStyle(theme)} aria-labelledby="game-title">
+      <CropMarks />
+      <Ambient layers={theme.ambient} font={fontStack} />
+
+      <header class="g-hero">
+        <div class="g-hero__text">
+          {d.icon && <Image class="g-icon" src={d.icon} alt="" width={112} height={112} densities={[1, 2]} loading="eager" />}
+          <h1 id="game-title" class="g-title" style={`view-transition-name: title-${game.id}`}>{name}</h1>
+          <p class="g-tagline">{tagline}</p>
+          {
+            d.stores.length > 0 && (
+              <div class="g-stores">
+                {d.stores.map((s) => <StoreButton {...s} locale={locale} />)}
+              </div>
+            )
+          }
+          <ul class="g-chips">
+            <li>{pick(d.genre, locale)}</li>
+            {platforms.map((p) => <li>{p}</li>)}
+          </ul>
+        </div>
+        <div class="g-hero__art">
+          <Image
+            src={d.cover}
+            alt={pick(d.coverAlt, locale)}
+            widths={[640, 1024]}
+            sizes="(max-width: 900px) 92vw, 50vw"
+            loading="eager"
+            fetchpriority="high"
+            style={`view-transition-name: cover-${game.id}`}
+          />
+        </div>
+      </header>
+
+      {
+        trailerId && (
+          <section class="g-section" aria-labelledby="trailer-title">
+            <h2 id="trailer-title" class="g-h2">{t.game.trailer}</h2>
+            <Trailer id={trailerId} label={fill(t.game.playTrailer, { name })} />
+          </section>
+        )
+      }
+
+      {
+        shots.length > 0 && (
+          <section class="g-section g-section--bleed" aria-labelledby="shots-title">
+            <h2 id="shots-title" class="g-h2">{t.game.screenshots}</h2>
+            <Gallery shots={shots} locale={locale} />
+          </section>
+        )
+      }
+
+      <section class="g-section g-about" aria-labelledby="about-title">
+        <div>
+          <h2 id="about-title" class="g-h2">{t.game.about}</h2>
+          <div class="g-prose">{paragraphs.map((p) => <p>{p}</p>)}</div>
+        </div>
+        <aside class="g-card" aria-labelledby="details-title">
+          <h2 id="details-title" class="g-h3">{t.game.details}</h2>
+          <dl class="g-details">
+            <div><dt>{t.game.genre}</dt><dd>{pick(d.genre, locale)}</dd></div>
+            <div><dt>{t.game.platforms}</dt><dd>{platforms.join(', ')}</dd></div>
+            <div><dt>{t.game.released}</dt><dd>{releasedText}</dd></div>
+            <div><dt>{t.game.number}</dt><dd>{game.number}</dd></div>
+          </dl>
+          {
+            d.links.length > 0 && (
+              <ul class="g-links">
+                {d.links.map((l) => (
+                  <li><a href={l.url}>{pick(l.label, locale)}</a></li>
+                ))}
+              </ul>
+            )
+          }
+        </aside>
+      </section>
+    </article>
+  </div>
+
+  <div class="wrap">
+    <div class="sheet-foot">
+      <p class="label">{fill(t.game.end, { number: game.number })}</p>
+      <a class="link-arrow" href={href(locale, '/games/')}>{t.game.back}</a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  /* Studio margin around the plate ------------------------------ */
+  .sheet-head, .sheet-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1.1rem;
+    padding-inline: calc(var(--mark) + 4px);
+  }
+  .crumbs { display: flex; gap: 0.6rem; list-style: none; padding: 0; }
+  .crumbs li + li::before { content: '/'; margin-right: 0.6rem; color: var(--rule-strong); }
+  .crumbs a { text-decoration: none; }
+  .crumbs a:hover { color: var(--paper); }
+  .crumbs [aria-current] { color: var(--copper); }
+
+  .sheet {
+    padding-inline: calc(var(--gutter) + var(--mark) + 4px);
+  }
+  .plate--game {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: clamp(1.5rem, 5vw, 4.5rem) clamp(1.1rem, 5vw, 4.5rem) clamp(3rem, 7vw, 6rem);
+  }
+
+  /* Hero ------------------------------------------------------- */
+  .g-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  .g-icon {
+    width: clamp(72px, 9vw, 112px);
+    height: auto;
+    margin-bottom: 1.4rem;
+    border-radius: calc(var(--g-radius) * 1.1);
+    box-shadow: 0 var(--g-depth) 0 color-mix(in srgb, var(--g-text) 22%, transparent);
+  }
+  .g-title {
+    font-family: var(--g-font);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 6.4vw, 5.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .g-tagline {
+    margin-top: 1.1rem;
+    max-width: 30ch;
+    font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--g-muted);
+  }
+  .g-stores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 2rem;
+  }
+  .g-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: calc(1.6rem + var(--g-depth));
+    padding: 0;
+    list-style: none;
+  }
+  .g-chips li {
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--g-surface) 70%, transparent);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .g-hero__art { rotate: var(--g-tilt); }
+  .g-hero__art :global(img) {
+    width: 100%;
+    border: 6px solid var(--g-surface);
+    border-radius: var(--g-radius);
+    box-shadow: 0 calc(var(--g-depth) * 1.5) 0 color-mix(in srgb, var(--g-text) 18%, transparent);
+  }
+
+  /* Sections --------------------------------------------------- */
+  .g-section { margin-top: clamp(4rem, 9vw, 7rem); }
+  .g-h2 {
+    margin-bottom: 1.4rem;
+    font-family: var(--g-font);
+    font-weight: 700;
+    font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+  }
+  .g-h3 {
+    margin-bottom: 1rem;
+    font-family: var(--g-font);
+    font-weight: 700;
+    font-size: 1.3rem;
+  }
+  .g-section--bleed { margin-right: calc(clamp(1.1rem, 5vw, 4.5rem) * -1); }
+
+  .g-about {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+  .g-prose {
+    display: grid;
+    gap: 1rem;
+    max-width: 62ch;
+    font-size: 1.1rem;
+    line-height: 1.65;
+  }
+  .g-card {
+    padding: 1.5rem;
+    background: var(--g-surface);
+    border-radius: var(--g-radius);
+    box-shadow: 0 var(--g-depth) 0 color-mix(in srgb, var(--g-text) 16%, transparent);
+  }
+  .g-details { display: grid; }
+  .g-details div {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: 1rem;
+    padding-block: 0.6rem;
+    border-top: 2px dashed color-mix(in srgb, var(--g-text) 14%, transparent);
+  }
+  .g-details dt { color: var(--g-muted); font-weight: 500; }
+  .g-details dd { font-weight: 600; }
+  .g-links {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 1.2rem;
+    padding: 1rem 0 0;
+    list-style: none;
+    border-top: 2px dashed color-mix(in srgb, var(--g-text) 14%, transparent);
+    font-size: 0.95rem;
+  }
+  .g-links a { color: var(--g-muted); text-underline-offset: 3px; }
+  .g-links a:hover { color: var(--g-text); }
+
+  /* Entering the plate: the game's world arrives after the frame. */
+  @media (prefers-reduced-motion: no-preference) {
+    .g-hero__text > * { animation: pop 0.7s var(--ease-out) both; }
+    .g-hero__text > :nth-child(2) { animation-delay: 0.08s; }
+    .g-hero__text > :nth-child(3) { animation-delay: 0.16s; }
+    .g-hero__text > :nth-child(4) { animation-delay: 0.24s; }
+    .g-hero__text > :nth-child(5) { animation-delay: 0.3s; }
+    .g-hero__art { animation: drop 0.9s 0.1s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+  }
+  @keyframes pop { from { opacity: 0; translate: 0 18px; } }
+  @keyframes drop { from { opacity: 0; translate: 0 -24px; rotate: 0deg; } }
+
+  @media (max-width: 900px) {
+    .g-hero, .g-about { grid-template-columns: 1fr; }
+    .g-hero__art { order: -1; }
+  }
+  @media (max-width: 520px) {
+    .sheet { padding-inline: calc(var(--mark) + 6px); }
+    .g-details div { grid-template-columns: 1fr; gap: 0.1rem; }
+    .g-stores :global(.g-btn) { flex: 1 1 100%; justify-content: center; }
+  }
+</style>

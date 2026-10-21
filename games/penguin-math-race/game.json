@@ -1,0 +1,51 @@
+{
+  "name": "Penguin Math Race",
+  "tagline": "Solve the sum, hop the ice, beat three rival penguins to the flag.",
+  "description": "Penguin Math Race turns arithmetic into a race on the ice. Tap the right answer to hop forward, build combos with fast, accurate answers and reach the finish line before three rival penguins.\n\nAddition, subtraction, multiplication and division come in three difficulty ranges. Daily quests, a seven-day reward streak and 34 collectable costumes, each with its own levels and effects, keep every race a little different. You can also race the ghost of your own best run.",
+  "genre": "Racing · Math",
+  "platforms": ["ios", "android"],
+  "releaseDate": "2025-11-29",
+
+  "stores": [
+    { "store": "app-store", "url": "https://apps.apple.com/app/id6759984190" },
+    { "store": "google-play", "url": "https://play.google.com/store/apps/details?id=com.copperhand.penguinmath" }
+  ],
+  "trailer": { "youtube": "4S6rsmrHX3o" },
+  "links": [
+    { "label": "Privacy policy (Google Play)", "url": "/privacy-play.html" },
+    { "label": "Privacy policy (App Store)", "url": "/privacy-appstore.html" }
+  ],
+
+  "cover": "./cover.png",
+  "coverAlt": "Penguins in costumes, a king, a dinosaur, a ballerina, a vampire, an astronaut and a pirate, standing on blocks of ice.",
+  "icon": "./icon.png",
+  "screenshots": [
+    { "src": "./screenshots/01_race.png", "alt": "A race in progress: numbered ice tiles, the question 2 × 3, and a vampire penguin leading." },
+    { "src": "./screenshots/02_operations.png", "alt": "Choosing an operation and one of three difficulty ranges, each with a best time." },
+    { "src": "./screenshots/03_costumes.png", "alt": "The costume wardrobe with a crowd of costumed penguins in front." },
+    { "src": "./screenshots/04_effects.png", "alt": "Butterfly trail effects on the ice and a penguin crossing the finish line." },
+    { "src": "./screenshots/05_win.png", "alt": "The results card after a win: 100 points, 20 correct answers and gold earned." },
+    { "src": "./screenshots/06_rewards.png", "alt": "The seven-day reward streak and the daily quests panel with a treasure chest." }
+  ],
+
+  "theme": {
+    "scheme": "light",
+    "colors": {
+      "background": "#D7EEFA",
+      "surface": "#FFFFFF",
+      "text": "#14294A",
+      "muted": "#43607F",
+      "accent": "#FFC22E",
+      "accentText": "#14294A",
+      "highlight": "#F27BA8"
+    },
+    "font": { "family": "Fredoka", "weights": [500, 600, 700] },
+    "radius": 22,
+    "depth": 6,
+    "tilt": -2,
+    "ambient": [
+      { "type": "glyphs", "glyphs": ["+", "−", "×", "÷"], "colors": ["#F59AC0", "#FFD45C", "#5CCFC1", "#9F92F2"], "density": 0.8, "speed": 0.6 },
+      { "type": "snow", "colors": ["#FFFFFF"], "density": 1, "speed": 0.8 }
+    ]
+  }
+}

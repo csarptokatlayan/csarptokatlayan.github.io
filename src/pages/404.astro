@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Words from '../components/Words.astro';
+import Engraving from '../components/Engraving.astro';
+import { defaultLocale, href, useTranslations } from '../i18n';
+
+const locale = defaultLocale;
+const t = useTranslations(locale);
+---
+
+<Base locale={locale} title={t.meta.notFoundTitle} description={t.notFound.lede}>
+  <section class="lost" data-engrave-host>
+    <Engraving />
+    <div class="wrap page-head">
+      <p class="label label--copper" data-reveal>{t.notFound.kicker}</p>
+      <Words as="h1" class="page-title" text={t.notFound.title} inkFrom={4} delay={80} />
+      <p class="page-lede" data-reveal style="--d:500">{t.notFound.lede}</p>
+      <p class="lost__links" data-reveal style="--d:650">
+        <a class="link-arrow" href={href(locale, '/')}>{t.notFound.home}</a>
+        <a class="link-arrow" href={href(locale, '/games/')}>{t.notFound.games}</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lost { position: relative; isolation: isolate; overflow: hidden; min-height: 70vh; }
+  .lost__links { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 2.4rem; }
+</style>
