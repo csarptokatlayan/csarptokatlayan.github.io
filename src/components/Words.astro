@@ -1,0 +1,27 @@
+---
+// A heading set word by word so it can rise into place (see .words in
+// global.css). Words from `inkFrom` onwards are printed in copper.
+interface Props {
+  text: string;
+  as?: 'h1' | 'h2' | 'p';
+  class?: string;
+  id?: string;
+  inkFrom?: number;
+  /** Extra delay before the first word, in ms. */
+  delay?: number;
+}
+const { text, as: Tag = 'h2', class: className, id, inkFrom = Infinity, delay = 0 } = Astro.props;
+const words = text.trim().split(/\s+/);
+---
+
+<Tag class:list={['words', className]} id={id} data-reveal="fade" style={`--base:${delay}ms`}>
+  {
+    words.map((word, i) => (
+      <>
+        <span class:list={['w', { ink: i >= inkFrom }]}>
+          <span style={`--i:${i}`}>{word}</span>
+        </span>{' '}
+      </>
+    ))
+  }
+</Tag>

@@ -1,0 +1,137 @@
+---
+// The studio's hero background: parallel hatching, the way a copper
+// engraver shades a plate. Lines are cut in on load, then bend around the
+// pointer like a lens and pick up copper where it passes. With no pointer
+// (touch screens) the lens drifts on its own. Still for reduced motion.
+---
+
+<div class="engraving" aria-hidden="true">
+  <canvas></canvas>
+</div>
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+
+  for (const canvas of document.querySelectorAll<HTMLCanvasElement>('.engraving canvas')) {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) continue;
+    const host = canvas.closest<HTMLElement>('[data-engrave-host]') ?? canvas.parentElement!;
+
+    const GAP = 9;
+    const STEP = 6;
+    const INTRO = 1800;
+    let w = 0, h = 0, dpr = 1;
+    let raf = 0, visible = true, start = 0;
+    let pointerSeen = false;
+    const lens = { x: 0, y: 0, tx: 0, ty: 0, r: 0, tr: 0 };
+
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth;
+      h = canvas.clientHeight;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (!lens.x) { lens.x = lens.tx = w * 0.72; lens.y = lens.ty = h * 0.5; }
+    };
+
+    const ease = (t: number) => 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 3);
+
+    const draw = (now: number) => {
+      const t = now / 1000;
+      const elapsed = reduced.matches ? INTRO * 2 : now - start;
+
+      if (!pointerSeen) {
+        // Slow figure-eight over the right half of the hero.
+        lens.tx = w * (0.7 + 0.16 * Math.sin(t * 0.23));
+        lens.ty = h * (0.5 + 0.28 * Math.sin(t * 0.37 + 1));
+        lens.tr = Math.min(w, h) * 0.26;
+      }
+      lens.x += (lens.tx - lens.x) * 0.08;
+      lens.y += (lens.ty - lens.y) * 0.08;
+      lens.r += (lens.tr - lens.r) * 0.06;
+
+      ctx.clearRect(0, 0, w, h);
+      const rows = Math.ceil(h / GAP) + 1;
+      const sigma2 = 2 * lens.r * lens.r;
+
+      const trace = () => {
+        ctx.beginPath();
+        for (let row = 0; row < rows; row++) {
+          const y0 = row * GAP;
+          // Lines are cut in from the right, staggered top to bottom.
+          const p = ease((elapsed - row * 10) / (INTRO * 0.7));
+          if (p <= 0) continue;
+          const xStart = w - w * p;
+          for (let x = xStart; x <= w + STEP; x += STEP) {
+            const dx = x - lens.x;
+            const dy = y0 - lens.y;
+            const fall = Math.exp(-(dx * dx + dy * dy) / sigma2);
+            const push = Math.sign(dy || 1) * fall * GAP * 2.6;
+            const wave = Math.sin(x * 0.005 + t * 0.5 + row * 0.21) * 1.4;
+            const y = y0 + push + wave;
+            if (x === xStart) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+        }
+      };
+
+      ctx.lineWidth = 1;
+      trace();
+      ctx.strokeStyle = 'rgba(235, 229, 218, 0.09)';
+      ctx.stroke();
+
+      const glow = ctx.createRadialGradient(lens.x, lens.y, 0, lens.x, lens.y, lens.r * 1.35);
+      glow.addColorStop(0, 'rgba(232, 162, 108, 0.8)');
+      glow.addColorStop(0.55, 'rgba(205, 129, 80, 0.3)');
+      glow.addColorStop(1, 'rgba(205, 129, 80, 0)');
+      ctx.strokeStyle = glow;
+      ctx.stroke();
+    };
+
+    const loop = (now: number) => {
+      draw(now);
+      raf = requestAnimationFrame(loop);
+    };
+
+    const sync = () => {
+      cancelAnimationFrame(raf);
+      if (reduced.matches) return draw(performance.now());
+      if (visible && !document.hidden) raf = requestAnimationFrame(loop);
+    };
+
+    host.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const box = canvas.getBoundingClientRect();
+      pointerSeen = true;
+      lens.tx = e.clientX - box.left;
+      lens.ty = e.clientY - box.top;
+      lens.tr = Math.min(w, h) * 0.2;
+    });
+    host.addEventListener('pointerleave', () => { pointerSeen = false; });
+
+    start = performance.now();
+    new ResizeObserver(() => { resize(); sync(); }).observe(canvas);
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); }).observe(canvas);
+    document.addEventListener('visibilitychange', sync);
+    reduced.addEventListener('change', sync);
+  }
+</script>
+
+<style>
+  .engraving {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* Keep the hatching away from the headline. */
+    mask-image: linear-gradient(90deg, transparent 0%, rgb(0 0 0 / 0.25) 30%, #000 62%);
+  }
+  .engraving canvas {
+    width: 100%;
+    height: 100%;
+  }
+  @media (max-width: 860px) {
+    .engraving { mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.35) 0%, rgb(0 0 0 / 0.15) 45%, #000 100%); }
+  }
+</style>

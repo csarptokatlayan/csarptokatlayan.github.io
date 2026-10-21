@@ -1,0 +1,159 @@
+---
+// Moving background for a game's plate, driven by theme.ambient in game.json.
+// Layer types: snow, glyphs, embers, dust. Stays still for visitors who
+// prefer reduced motion, pauses when off screen or in a background tab.
+import type { Theme } from '../lib/games';
+
+interface Props {
+  layers: Theme['ambient'];
+  font?: string;
+}
+const { layers, font } = Astro.props;
+---
+
+{
+  layers.length > 0 && (
+    <div class="ambient" aria-hidden="true">
+      <canvas data-ambient={JSON.stringify(layers)} data-font={font ?? ''} />
+    </div>
+  )
+}
+
+<script>
+  type Layer = {
+    type: 'snow' | 'glyphs' | 'embers' | 'dust';
+    density: number;
+    speed: number;
+    colors?: string[];
+    glyphs?: string[];
+  };
+  type P = { x: number; y: number; r: number; vx: number; vy: number; a: number; spin: number; rot: number; phase: number; c: string; g: string };
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+
+  for (const canvas of document.querySelectorAll<HTMLCanvasElement>('canvas[data-ambient]')) {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) continue;
+    const layers: Layer[] = JSON.parse(canvas.dataset.ambient ?? '[]');
+    const font = canvas.dataset.font || 'sans-serif';
+    let w = 0, h = 0, raf = 0, last = 0, visible = true;
+    let groups: { layer: Layer; parts: P[] }[] = [];
+
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+    const pickOf = <T,>(list: T[]) => list[Math.floor(Math.random() * list.length)];
+
+    const spawn = (layer: Layer, anywhere: boolean): P => {
+      const colors = layer.colors?.length ? layer.colors : ['#ffffff'];
+      const base = { x: rand(0, w), rot: rand(0, Math.PI * 2), phase: rand(0, Math.PI * 2), c: pickOf(colors), g: '' };
+      const s = layer.speed;
+      switch (layer.type) {
+        case 'glyphs': {
+          const r = rand(34, 96);
+          return { ...base, r, y: anywhere ? rand(0, h) : h + r, vx: rand(-6, 6) * s, vy: -rand(8, 18) * s, a: rand(0.35, 0.6), spin: rand(-0.25, 0.25) * s, g: pickOf(layer.glyphs?.length ? layer.glyphs : ['+']) };
+        }
+        case 'embers': {
+          const r = rand(1, 2.6);
+          return { ...base, r, y: anywhere ? rand(0, h) : h + 4, vx: rand(-8, 8) * s, vy: -rand(20, 55) * s, a: rand(0.4, 0.9), spin: 0 };
+        }
+        case 'dust': {
+          const r = rand(0.8, 2);
+          return { ...base, r, y: rand(0, h), vx: rand(-5, 5) * s, vy: rand(-5, 5) * s, a: rand(0.15, 0.45), spin: 0 };
+        }
+        default: {
+          const r = rand(1.4, 3.8);
+          return { ...base, r, y: anywhere ? rand(0, h) : -r, vx: rand(-6, 6) * s, vy: rand(18, 46) * s * (r / 3), a: rand(0.55, 0.95), spin: 0 };
+        }
+      }
+    };
+
+    const perArea = { snow: 90, glyphs: 13, embers: 45, dust: 40 };
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth;
+      h = canvas.clientHeight;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const area = (w * h) / 1_000_000;
+      groups = layers.map((layer) => ({
+        layer,
+        parts: Array.from({ length: Math.max(3, Math.round(perArea[layer.type] * area * layer.density)) }, () => spawn(layer, true)),
+      }));
+    };
+
+    const draw = (dt: number) => {
+      ctx.clearRect(0, 0, w, h);
+      for (const { layer, parts } of groups) {
+        for (let i = 0; i < parts.length; i++) {
+          const p = parts[i];
+          p.phase += dt;
+          p.x += (p.vx + Math.sin(p.phase * 0.8) * 10 * layer.speed) * dt;
+          p.y += p.vy * dt;
+          p.rot += p.spin * dt;
+          const out = p.y < -p.r * 2 || p.y > h + p.r * 2 || p.x < -p.r * 2 || p.x > w + p.r * 2;
+          if (out) parts[i] = spawn(layer, layer.type === 'dust');
+
+          ctx.globalAlpha = layer.type === 'embers' ? p.a * (0.6 + 0.4 * Math.sin(p.phase * 6)) : p.a;
+          ctx.fillStyle = p.c;
+          if (layer.type === 'glyphs') {
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.font = `700 ${p.r}px ${font}`;
+            ctx.fillText(p.g, 0, 0);
+            ctx.restore();
+          } else {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    const loop = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      draw(dt);
+      raf = requestAnimationFrame(loop);
+    };
+
+    const sync = () => {
+      cancelAnimationFrame(raf);
+      if (reduced.matches) return draw(0);
+      if (visible && !document.hidden) {
+        last = performance.now();
+        raf = requestAnimationFrame(loop);
+      }
+    };
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    new ResizeObserver(() => { resize(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; sync(); }).observe(canvas);
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); }).observe(canvas.parentElement!);
+    document.addEventListener('visibilitychange', sync);
+    reduced.addEventListener('change', sync);
+    document.fonts?.ready.then(() => reduced.matches && draw(0));
+  }
+</script>
+
+<style>
+  .ambient {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .ambient canvas {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100lvh;
+    opacity: 0;
+    animation: ambient-in 1.2s 0.3s ease-out forwards;
+  }
+  @keyframes ambient-in { to { opacity: 1; } }
+</style>

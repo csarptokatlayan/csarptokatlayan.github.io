@@ -1,0 +1,46 @@
+/* ---------------------------------------------------------------
+   Inside a game's plate. Everything here reads the --g-* variables
+   that the game's own theme sets, so a new game needs no CSS.
+---------------------------------------------------------------- */
+.plate--game {
+  background: var(--g-bg);
+  color: var(--g-text);
+  font-family: var(--g-body);
+  /* Keeps a dark plate visible against the studio's dark margin. */
+  box-shadow: 0 0 0 1px var(--rule);
+}
+.plate--game ::selection { background: var(--g-accent); color: var(--g-accent-text); }
+.plate--game :focus-visible { outline-color: var(--g-text); }
+
+.g-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 3.25rem;
+  padding: 0.55rem 1.25rem 0.55rem 1rem;
+  border: 0;
+  border-radius: calc(var(--g-radius) * 0.7);
+  background: var(--g-accent);
+  color: var(--g-accent-text);
+  font-family: var(--g-font);
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 1.1;
+  cursor: pointer;
+  box-shadow: 0 var(--g-depth) 0 color-mix(in srgb, var(--g-accent) 58%, black);
+  transition: transform 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out), filter 0.2s;
+}
+.g-btn:hover { filter: brightness(1.05); }
+.g-btn:active {
+  transform: translateY(var(--g-depth));
+  box-shadow: 0 0 0 color-mix(in srgb, var(--g-accent) 58%, black);
+}
+.g-btn svg { width: 1.5rem; height: 1.5rem; flex: none; }
+.g-btn--quiet {
+  background: var(--g-surface);
+  color: var(--g-text);
+  box-shadow: 0 var(--g-depth) 0 color-mix(in srgb, var(--g-text) 30%, transparent);
+}
+.store__text { display: grid; }
+.store__text small { font-size: 0.72rem; font-weight: 500; opacity: 0.8; }
+.store__text strong { font-size: 1.05rem; font-weight: 700; }

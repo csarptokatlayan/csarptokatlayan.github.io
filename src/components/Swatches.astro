@@ -1,0 +1,11 @@
+---
+interface Props {
+  colors: string[];
+  label: string;
+}
+const { colors, label } = Astro.props;
+---
+
+<ul class="swatches" role="img" aria-label={label}>
+  {colors.map((c) => <li style={`--c:${c}`} />)}
+</ul>

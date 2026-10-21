@@ -1,0 +1,81 @@
+---
+// YouTube trailer that loads nothing from YouTube until it is clicked,
+// apart from the poster image. Keeps the page fast and cookie-free.
+interface Props {
+  id: string;
+  label: string;
+}
+const { id, label } = Astro.props;
+const poster = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+---
+
+<div class="trailer" data-trailer={id}>
+  <img src={poster} alt="" width="1280" height="720" loading="lazy" decoding="async" />
+  <button type="button" class="trailer__play" aria-label={label}>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.53.85l10.2-6.5a1 1 0 0 0 0-1.7L9.53 4.65A1 1 0 0 0 8 5.5Z" fill="currentColor"/></svg>
+  </button>
+  <noscript><a href={`https://www.youtube.com/watch?v=${id}`}>{label}</a></noscript>
+</div>
+
+<script>
+  for (const box of document.querySelectorAll<HTMLElement>('[data-trailer]')) {
+    const button = box.querySelector('button');
+    button?.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = `https://www.youtube-nocookie.com/embed/${box.dataset.trailer}?autoplay=1&rel=0`;
+      frame.title = button.getAttribute('aria-label') ?? 'Trailer';
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.allowFullscreen = true;
+      box.replaceChildren(frame);
+      frame.focus();
+    });
+  }
+</script>
+
+<style>
+  .trailer {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--g-text);
+    border-radius: var(--g-radius);
+    box-shadow: 0 var(--g-depth) 0 color-mix(in srgb, var(--g-text) 22%, transparent);
+  }
+  .trailer img,
+  .trailer :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 0;
+  }
+  .trailer__play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: clamp(64px, 11vw, 104px);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: var(--g-accent);
+    color: var(--g-accent-text);
+    box-shadow: 0 var(--g-depth) 0 color-mix(in srgb, var(--g-accent) 55%, black);
+    cursor: pointer;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+  }
+  .trailer__play svg { width: 42%; translate: 6% 0; }
+  .trailer__play:hover { transform: scale(1.06); }
+  .trailer__play:active {
+    transform: translateY(var(--g-depth));
+    box-shadow: 0 0 0 color-mix(in srgb, var(--g-accent) 55%, black);
+  }
+  .trailer noscript a {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    color: #fff;
+  }
+</style>
