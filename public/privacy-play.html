@@ -281,12 +281,23 @@
             <p>Our priority is providing a safe and fun learning environment for children. The app is free to play and contains optional, family-friendly rewarded video ads. We design the app to comply with data protection laws for children, including COPPA, and with the Google Play Families Policy.</p>
 
             <h2>2. Information We Do Not Collect</h2>
-            <p>We do <strong>not</strong> ask for or collect your name, email address, phone number, address, photos, contacts, microphone or camera data, or precise location. The app has no accounts, no sign-in, no user chat, and no social features. We do not set any user ID or user profile.</p>
+            <p>We do <strong>not</strong> ask for or collect your name, email address, phone number, address, photos, contacts, microphone or camera data, or precise location. The app has no accounts that a player creates, no sign-in screen, no player names or profiles, no text input, and no chat or messaging. The only identifier is a randomly generated anonymous ID that is not linked to a person, an email address or a device ID (see section 4).</p>
 
             <h2>3. Information Stored on Your Device</h2>
-            <p>Game progress (such as gold, unlocked costumes, records, settings, and the frame rate preference) is saved <strong>only on your device</strong>. It is not sent to us. Uninstalling the app removes this data.</p>
+            <p>Game progress (such as gold, unlocked costumes, settings, and the frame rate preference) is saved <strong>on your device</strong>. Uninstalling the app removes this data. The only parts of it that are sent to us are the best race times described in section 4.</p>
 
-            <h2>4. Anonymous Usage Analytics</h2>
+            <h2>4. Online Records Leaderboard</h2>
+            <p>The app has a wordless online leaderboard that shows the fastest race times of players around the world and in the player's own country. It has no names, no text and no way to talk to other players.</p>
+            <ul>
+                <li><strong>Anonymous sign-in:</strong> when the leaderboard is first used, the app signs in with <strong>Firebase Anonymous Authentication</strong>. This creates a random ID. It asks for no name, email or password and is not linked to the child, the device or the advertising ID.</li>
+                <li><strong>What is stored:</strong> for each game mode, the player's best race time, the costume worn during that race, the split times of that race (used to replay it as a "ghost"), a two-letter country code, and the random ID.</li>
+                <li><strong>Country code:</strong> taken from the language/region setting of the device, not from GPS or the IP address. It is shown as a flag.</li>
+                <li><strong>Who can see it:</strong> other players of the app can see the times, flags, costumes and ghost runs on the leaderboard. They cannot see anything that identifies a person.</li>
+                <li><strong>Where it is kept:</strong> in Google Cloud Firestore (Firebase), which processes it on our behalf. It is kept until it is deleted on request (see section 9).</li>
+            </ul>
+            <p>The game works fully without the leaderboard. If there is no internet connection, the leaderboard shows only the player's own best times from the device.</p>
+
+            <h2>5. Anonymous Usage Analytics</h2>
             <p>To understand which parts of the game are fun and to fix problems, the app uses <strong>Google Analytics for Firebase</strong>. It records anonymous gameplay events, for example: a race started or ended, a costume or effect was bought or tried, a daily reward was claimed, or the frame rate setting was changed. These events contain no personal information.</p>
             <p>The following technical data may be processed automatically by Firebase: a randomly generated app-instance identifier (not linked to you or your device's advertising ID), device model, operating system version, app version, language, and approximate country derived from the IP address.</p>
             <ul>
@@ -294,7 +305,7 @@
                 <li>Analytics data is not used for advertising or ad personalization, and ad-related consent is set to denied.</li>
             </ul>
 
-            <h2>5. Advertising and Families Policy</h2>
+            <h2>6. Advertising and Families Policy</h2>
             <p>The app shows <strong>rewarded video ads only</strong>, and only when the player chooses to watch one (for example, to double a reward). There are no banner or forced full-screen ads. We use <strong>Google AdMob</strong>, a Google Play certified ad SDK, and:</p>
             <ul>
                 <li>All ad requests are marked as <strong>child-directed</strong> (Tag for Child-Directed Treatment).</li>
@@ -303,22 +314,22 @@
             </ul>
             <p>AdMob may process limited technical data such as IP address (for approximate location, security and fraud prevention), device and software information, and ad interaction data (for frequency capping and measurement). See <a href="https://policies.google.com/privacy" rel="noopener">Google's Privacy Policy</a> for details.</p>
 
-            <h2>6. Purchases, Links and Safety</h2>
-            <p>The app has <strong>no in-app purchases with real money</strong>. Gold is an in-game currency earned by playing or by watching optional rewarded ads. The app contains no social media links, no web browsing, and no user-to-user communication.</p>
+            <h2>7. Purchases, Links and Safety</h2>
+            <p>The app has <strong>no in-app purchases with real money</strong>. Gold is an in-game currency earned by playing or by watching optional rewarded ads. The app contains no social media links, no web browsing, and no chat, messaging or other communication between players. The only interaction between players is seeing each other's race times on the leaderboard and racing against a recorded "ghost".</p>
 
-            <h2>7. Data Sharing and Retention</h2>
-            <p>We do not sell personal data. Anonymous analytics data is processed by Google (Firebase) on our behalf, and ad data is processed by Google (AdMob). Analytics data is retained according to our Firebase retention settings and is not linked to an identifiable person.</p>
+            <h2>8. Data Sharing and Retention</h2>
+            <p>We do not sell personal data. Anonymous analytics data and leaderboard data are processed by Google (Firebase) on our behalf, and ad data is processed by Google (AdMob). Analytics data is retained according to our Firebase retention settings. Leaderboard records are kept until they are deleted on request. None of this data is linked to an identifiable person.</p>
 
-            <h2>8. Parents' Rights</h2>
-            <p>Because we do not knowingly collect personal information from children, there is normally nothing for us to delete. If you believe your child has provided personal information, contact us and we will promptly remove it. Parents can also reset the app's data by clearing app storage or uninstalling the app, and can reset or limit ad-related identifiers in their device's Google settings.</p>
+            <h2>9. Parents' Rights</h2>
+            <p>We do not knowingly collect personal information from children. Leaderboard records contain only a random ID, a race time, a costume, split times and a country flag. A parent can ask us to delete the leaderboard records of their child's device by writing to the address below; because the records are anonymous, please include the app version and approximate dates of play so we can help. Parents can also reset the app's data by clearing app storage or uninstalling the app, and can reset or limit ad-related identifiers in their device's Google settings.</p>
 
-            <h2>9. Intellectual Property &amp; AI Usage</h2>
+            <h2>10. Intellectual Property &amp; AI Usage</h2>
             <p>All game materials were created by CopperHand Studio. Some assets were produced with the assistance of licensed AI tools, reviewed and finalized by the developer. CopperHand Studio asserts full ownership for in-game use.</p>
 
-            <h2>10. Changes to This Policy</h2>
+            <h2>11. Changes to This Policy</h2>
             <p>If we change how the app handles data, we will update this page and the "Last updated" date.</p>
 
-            <h2>11. Data Safety Summary (Google Play)</h2>
+            <h2>12. Data Safety Summary (Google Play)</h2>
             <table>
                 <thead>
                     <tr>
@@ -330,13 +341,13 @@
                 </thead>
                 <tbody>
                     <tr><td>Personal info (name, email, etc.)</td><td>No</td><td>No</td><td>—</td></tr>
-                    <tr><td>Location</td><td>No (approximate location only from IP, processed by SDKs)</td><td>No</td><td>—</td></tr>
-                    <tr><td>App activity (anonymous in-game events)</td><td>Yes</td><td>No (processed by Google Firebase as a service provider)</td><td>Analytics</td></tr>
+                    <tr><td>Location</td><td>Approximate only: a country code from the device language/region setting (no GPS), and approximate location from IP processed by SDKs</td><td>Country code is visible to other players as a flag</td><td>App functionality (leaderboard), Analytics</td></tr>
+                    <tr><td>App activity (anonymous in-game events, best race times, costume, ghost run)</td><td>Yes</td><td>Race times, costume and ghost run are visible to other players on the leaderboard; events are processed by Google Firebase as a service provider</td><td>App functionality (leaderboard), Analytics</td></tr>
                     <tr><td>App info and performance (device model, OS version)</td><td>Yes</td><td>No</td><td>Analytics</td></tr>
-                    <tr><td>Device or other IDs (app-instance ID; no advertising ID)</td><td>Yes</td><td>Yes (Google AdMob / Firebase SDKs)</td><td>Analytics, Fraud prevention, Advertising (non-personalized)</td></tr>
+                    <tr><td>Device or other IDs (random anonymous ID from Firebase; no advertising ID)</td><td>Yes</td><td>Yes (Google AdMob / Firebase SDKs); the random leaderboard ID is stored with the record</td><td>App functionality (leaderboard), Analytics, Fraud prevention, Advertising (non-personalized)</td></tr>
                 </tbody>
             </table>
-            <p>All data is encrypted in transit. The app has no accounts, so a data deletion request is not applicable; contact us with any request.</p>
+            <p>All data is encrypted in transit. Players do not create accounts, but leaderboard records can be deleted on request; contact us at the address below.</p>
 
             <div class="contact-box">
                 <h2>Contact Us</h2>
